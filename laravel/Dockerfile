@@ -1,5 +1,5 @@
-# chekote/php:7-laravel
-FROM chekote/php:7
+# chekote/php:5-laravel
+FROM chekote/php:5.6.30-c
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -20,7 +20,3 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/*
 
-VOLUME ["/data"]
-WORKDIR /data
-
-ENTRYPOINT ["/bin/bash", "-c"]

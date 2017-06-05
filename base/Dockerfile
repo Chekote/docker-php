@@ -1,7 +1,7 @@
-# chekote/php:7
+# chekote/php:5
 FROM chekote/ubuntu:yakkety-b
 
-ENV PHP_VERSION 7.1
+ENV PHP_VERSION 5.6
 
 # Fix add-apt-repository is broken with non-UTF-8 locales, see https://github.com/oerdnj/deb.sury.org/issues/56
 ENV LC_ALL C.UTF-8
