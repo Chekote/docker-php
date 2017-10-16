@@ -1,5 +1,5 @@
 # chekote/php:5
-FROM chekote/ubuntu:yakkety-b
+FROM chekote/ubuntu:zesty-b
 
 ENV PHP_VERSION 5.6
 

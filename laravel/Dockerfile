@@ -1,5 +1,5 @@
 # chekote/php:5-laravel
-FROM chekote/php:5.6.30-c
+FROM chekote/php:5.6.31
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
