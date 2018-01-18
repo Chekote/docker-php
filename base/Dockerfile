@@ -1,5 +1,5 @@
 # chekote/php:5
-FROM chekote/ubuntu:zesty-b
+FROM chekote/ubuntu:xenial
 
 ENV PHP_VERSION 5.6
 
