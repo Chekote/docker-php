@@ -1,5 +1,6 @@
-# chekote/php:7-composer
-FROM chekote/php:7
+# chekote/php:${PHP_VERSION}-composer
+ARG PHP_VERSION
+FROM chekote/php:${PHP_VERSION}
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

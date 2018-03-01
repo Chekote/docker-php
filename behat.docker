@@ -1,5 +1,6 @@
-# chekote/php:7-behat
-FROM chekote/php:7-composer
+# chekote/php:${PHP_VERSION}-behat
+ARG PHP_VERSION
+FROM chekote/php:${PHP_VERSION}-composer
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends --no-install-suggests \

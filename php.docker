@@ -1,7 +1,8 @@
-# chekote/php:7
+# chekote/php:${PHP_VERSION}
 FROM chekote/ubuntu:xenial
 
-ENV PHP_VERSION 7.1
+ARG PHP_VERSION
+ENV PHP_VERSION ${PHP_VERSION}
 
 # Fix add-apt-repository is broken with non-UTF-8 locales, see https://github.com/oerdnj/deb.sury.org/issues/56
 ENV LC_ALL C.UTF-8

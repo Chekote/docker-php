@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# Checks the exit code of the previous command and bails if it's not zero
+exitCheck() {
+  if [ $1 != 0 ]; then
+    echo "Got exit code $1, quitting."
+    exit $1
+  fi
+}
+
+buildImage() {
+  if [ "$1" = "php" ]; then
+    TAG_SUFFIX=""
+  else
+    TAG_SUFFIX="-$1"
+  fi
+
+  echo ""
+  echo "Building $1 image"
+  docker image build -f $1.docker --build-arg PHP_VERSION=${MAJOR_VERSION}.${MINOR_VERSION} -t chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} .
+  exitCheck $?
+
+  if [ "$1" = "php" ]; then
+    PATCH_VERSION=`docker run chekote/php:${MAJOR_VERSION} php -r "echo explode('.', substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-')))[2];"`
+  fi
+
+  echo ""
+  echo "Tagging image"
+  docker image tag chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}
+  exitCheck $?
+
+  docker image tag chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}
+  exitCheck $?
+
+  echo "Successfully tagged image"
+
+  echo ""
+  echo "Pushing $1 image"
+  docker push chekote/php:${MAJOR_VERSION}${TAG_SUFFIX}
+  exitCheck $?
+
+  docker push chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}
+  exitCheck $?
+
+  docker push chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}
+  exitCheck $?
+}
+
+echo "Please enter the major PHP version (e.g. 5, 7), followed by [ENTER]:"
+read MAJOR_VERSION
+
+echo ""
+echo "Please enter the minor PHP version (e.g. 1, 2, 3), followed by [ENTER]:"
+read MINOR_VERSION
+
+buildImage php
+buildImage composer
+buildImage behat
+buildImage laravel
+buildImage phpunit
