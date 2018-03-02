@@ -4,7 +4,7 @@ FROM chekote/php:${PHP_VERSION}-composer
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-
+        #
         # PHPUnit requirements. See https://phpunit.de/manual/6.4/en/installation.html#installation.requirements
         php${PHP_VERSION}-dom \
         php${PHP_VERSION}-json \
@@ -12,7 +12,7 @@ RUN apt-get update && \
         php${PHP_VERSION}-tokenizer \
         php${PHP_VERSION}-xdebug \
         php${PHP_VERSION}-xmlwriter && \
-
+    #
     # Cleanup
     apt-get autoremove -y && \
     apt-get clean && \
