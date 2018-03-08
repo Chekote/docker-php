@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+COLOR_GREEN='\033[0;32m'
 COLOR_RED="\033[0;31m"
 COLOR_RESET='\033[0m'
 
@@ -25,8 +26,11 @@ buildImage() {
   docker image build -f ${IMAGE}.docker --build-arg PHP_VERSION=${MAJOR_VERSION}.${MINOR_VERSION} -t chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} .
   exitCheck $?
 
+  printf "${COLOR_GREEN}Successfully built image${COLOR_RESET}\n"
+
   if [ "${IMAGE}" = "php" ]; then
     PATCH_VERSION=`docker run chekote/php:${MAJOR_VERSION} php -r "echo explode('.', substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-')))[2];"`
+    echo "PHP Patch Version: ${PATCH_VERSION}"
   fi
 
   echo ""
@@ -37,15 +41,17 @@ buildImage() {
   docker image tag chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}
   exitCheck $?
 
-  echo "Successfully tagged image"
+  printf "${COLOR_GREEN}Successfully created image tags${COLOR_RESET}\n"
 
   echo ""
   echo "Pushing $1 image"
   docker push chekote/php:${MAJOR_VERSION}${TAG_SUFFIX}
   exitCheck $?
+  printf "${COLOR_GREEN}Successfully pushed image chekote/php:${MAJOR_VERSION}${TAG_SUFFIX}${COLOR_RESET}\n"
 
   docker push chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}
   exitCheck $?
+  printf "${COLOR_GREEN}Successfully pushed image chekote/php:${MAJOR_VERSION}${TAG_SUFFIX}${COLOR_RESET}\n"
 
   docker push chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}
   exitCheck $?
