@@ -12,18 +12,20 @@ exitCheck() {
 }
 
 buildImage() {
-  if [ "$1" = "php" ]; then
+  IMAGE=$1
+
+  if [ "${IMAGE}" = "php" ]; then
     TAG_SUFFIX=""
   else
-    TAG_SUFFIX="-$1"
+    TAG_SUFFIX="-${IMAGE}"
   fi
 
   echo ""
-  echo "Building $1 image"
-  docker image build -f $1.docker --build-arg PHP_VERSION=${MAJOR_VERSION}.${MINOR_VERSION} -t chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} .
+  echo "Building ${IMAGE} image"
+  docker image build -f ${IMAGE}.docker --build-arg PHP_VERSION=${MAJOR_VERSION}.${MINOR_VERSION} -t chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} .
   exitCheck $?
 
-  if [ "$1" = "php" ]; then
+  if [ "${IMAGE}" = "php" ]; then
     PATCH_VERSION=`docker run chekote/php:${MAJOR_VERSION} php -r "echo explode('.', substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-')))[2];"`
   fi
 
