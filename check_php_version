@@ -1,0 +1,40 @@
+#!/usr/bin/env php
+<?php
+
+define('COLOR_GREEN', "\033[32m");
+define('COLOR_RED', "\033[31m");
+define('COLOR_RESET', "\033[0m");
+
+if (count($argv) != 2 && count($argv) != 3) {
+    echo "Usage: check_php_version <min_version>[ <max_version>]\n";
+    exit(1);
+}
+
+$actual_version = substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-'));
+
+$min_version = $argv[1];
+if (version_compare($actual_version, $min_version, '<')) {
+    echo COLOR_RED . "Minimum PHP Version $min_version required."
+        . " Installed version is $actual_version" . COLOR_RESET . "\n";
+
+    exit(1);
+}
+
+if (isset($argv[2])) {
+    $max_version = $argv[2];
+    if (version_compare($actual_version, $max_version, '>')) {
+        echo COLOR_RED . "Maximum PHP Version $max_version required."
+            . " Installed version is $actual_version" . COLOR_RESET . "\n";
+
+        exit(1);
+    }
+}
+
+echo COLOR_GREEN . "PHP Version $actual_version is installed.\n";
+echo "Meets minimum version requirement of $min_version.\n";
+
+if (isset($max_version)) {
+    echo "Meets maximum version requirement of $max_version.\n";
+}
+
+echo COLOR_RESET;

@@ -45,5 +45,6 @@ WORKDIR /workdir
 EXPOSE 9000
 
 COPY entrypoint.sh /usr/local/bin/entrypoint-php.sh
+COPY check_php_version /usr/local/bin
 
 ENTRYPOINT ["/usr/local/bin/entrypoint-php.sh"]

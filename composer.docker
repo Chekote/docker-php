@@ -2,7 +2,11 @@
 ARG PHP_VERSION=7.2
 FROM chekote/php:${PHP_VERSION}
 
-RUN apt-get update && \
+ENV REQUIRED_PHP_VERSION '5.3.2';
+
+RUN check_php_version ${REQUIRED_PHP_VERSION} && \
+    #
+    apt-get update && \
     apt-get install -y --no-install-recommends \
         #
         # Composer requirements. See https://getcomposer.org/doc/00-intro.md#system-requirements

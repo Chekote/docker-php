@@ -3,12 +3,26 @@
 COLOR_GREEN='\033[0;32m'
 COLOR_RED="\033[0;31m"
 COLOR_RESET='\033[0m'
+COLOR_YELLOW='\033[1;33m'
 
 # Checks the exit code of the previous command and bails if it's not zero
 exitCheck() {
   if [ $1 != 0 ]; then
     echo "${COLOR_RED}Got exit code $1, quitting.${COLOR_RESET}\n"
     exit $1
+  fi
+}
+
+versionLessThan() {
+  docker container run --rm chekote/php:7 php -r "version_compare('$1', '$2', '<') ? exit(1) : exit(0);";
+  return $?
+}
+
+assertVersion() {
+  ACTUAL_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
+  if versionLessThan $1 ${ACTUAL_VERSION}; then
+    printf "${COLOR_YELLOW}No further images supported for PHP version ${ACTUAL_VERSION}. Quitting...${COLOR_RESET}\n"
+    exit 0
   fi
 }
 
@@ -44,7 +58,7 @@ buildImage() {
   printf "${COLOR_GREEN}Successfully created image tags${COLOR_RESET}\n"
 
   echo ""
-  echo "Pushing $1 image"
+  echo "Pushing ${IMAGE} image"
   docker push chekote/php:${MAJOR_VERSION}${TAG_SUFFIX}
   exitCheck $?
   printf "${COLOR_GREEN}Successfully pushed image chekote/php:${MAJOR_VERSION}${TAG_SUFFIX}${COLOR_RESET}\n"
@@ -65,7 +79,31 @@ echo "Please enter the minor PHP version (e.g. 1, 2, 3), followed by [ENTER]:"
 read MINOR_VERSION
 
 buildImage php
+
+# requires 5.3.2
+assertVersion 5.3.2
 buildImage composer
-buildImage behat
-buildImage laravel
-buildImage phpunit
+
+# requires 5.3.3
+assertVersion 5.3.3
+buildImage behat3.4
+
+# requires 5.6
+assertVersion 5.6
+buildImage phpunit5
+
+# requires 5.6.4
+assertVersion 5.6.4
+buildImage laravel5.3
+
+# requires 7.0
+assertVersion 7.0
+buildImage phpunit6
+
+# requires 7.1
+assertVersion 7.1
+buildImage phpunit7
+
+# requires 7.1.3
+assertVersion 7.1.3
+buildImage laravel5.6
