@@ -1,5 +1,5 @@
 # chekote/php:${PHP_VERSION}
-FROM chekote/ubuntu:xenial
+FROM chekote/ubuntu:bionic
 
 ARG PHP_VERSION=7.2
 ENV PHP_VERSION ${PHP_VERSION}
