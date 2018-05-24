@@ -2,7 +2,7 @@
 ARG PHP_VERSION=7.2
 FROM chekote/php:${PHP_VERSION}-composer
 
-ENV MIN_PHP_VERSION '5.6';
+ENV MIN_PHP_VERSION '5.6'
 
 RUN check_php_version ${MIN_PHP_VERSION} && \
     #
