@@ -65,10 +65,11 @@ buildImage() {
 
   docker push chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}
   exitCheck $?
-  printf "${COLOR_GREEN}Successfully pushed image chekote/php:${MAJOR_VERSION}${TAG_SUFFIX}${COLOR_RESET}\n"
+  printf "${COLOR_GREEN}Successfully pushed image chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}${COLOR_RESET}\n"
 
   docker push chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}
   exitCheck $?
+  printf "${COLOR_GREEN}Successfully pushed image chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}${COLOR_RESET}\n"
 }
 
 echo "Please enter the major PHP version (e.g. 5, 7), followed by [ENTER]:"
