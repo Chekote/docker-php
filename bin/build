@@ -89,6 +89,10 @@ buildImage composer
 assertVersion 5.3.3
 buildImage behat3.4
 
+# requires 5.5.9
+assertVersion 5.5.9
+buildImage laravel5.1
+
 # requires 5.6
 assertVersion 5.6
 buildImage phpunit5
