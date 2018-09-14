@@ -5,7 +5,13 @@ COLOR_RED="\033[0;31m"
 COLOR_RESET='\033[0m'
 COLOR_YELLOW='\033[1;33m'
 
-# Checks the exit code of the previous command and bails if it's not zero
+PATCH_VERSION=
+#######################################
+# Checks the exit code passed and exits with it if it is not zero
+#
+# Arguments:
+#  1 the exit code to check
+#######################################
 exitCheck() {
   if [ $1 != 0 ]; then
     (>&2 printf "${COLOR_RED}Got exit code $1, quitting.${COLOR_RESET}\n")
@@ -13,11 +19,24 @@ exitCheck() {
   fi
 }
 
+#######################################
+# Checks two PHP versions to determine if the 1st is less than the 2nd
+#
+# Arguments:
+#  1 the 1st version to compare
+#  2 the 2nd version to compare
+#######################################
 versionLessThan() {
   docker container run --rm chekote/php:7 php -r "version_compare('$1', '$2', '<') ? exit(1) : exit(0);";
   return $?
 }
 
+#######################################
+# Asserts that PHP version being built equal to or higher than the specified version
+#
+# Arguments:
+#  1 the version to assert
+#######################################
 assertVersion() {
   ACTUAL_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
   if versionLessThan $1 ${ACTUAL_VERSION}; then
@@ -26,6 +45,13 @@ assertVersion() {
   fi
 }
 
+#######################################
+# Builds and pushes all of the PHP images for the current major and minor version
+#
+# Globals:
+#   MAJOR_VERSION the major PHP version to build images for
+#   MINOR_VERSION the minor PHP version to build images for
+#######################################
 buildImage() {
   IMAGE=$1
 
