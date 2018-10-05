@@ -39,7 +39,7 @@ versionLessThan() {
 # Arguments:
 #  1 the version to assert
 #######################################
-assertVersion() {
+assertVersionAtLeast() {
   ACTUAL_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
   if versionLessThan $1 ${ACTUAL_VERSION}; then
     printf "${COLOR_YELLOW}No further images supported for PHP version ${ACTUAL_VERSION}. Quitting...${COLOR_RESET}\n"
@@ -119,34 +119,34 @@ read MINOR_VERSION
 buildImage php
 
 # requires 5.3.2
-assertVersion 5.3.2
+assertVersionAtLeast 5.3.2
 buildImage composer
 
 # requires 5.3.3
-assertVersion 5.3.3
+assertVersionAtLeast 5.3.3
 buildImage behat3.4
 
 # requires 5.5.9
-assertVersion 5.5.9
+assertVersionAtLeast 5.5.9
 buildImage laravel5.1
 
 # requires 5.6
-assertVersion 5.6
+assertVersionAtLeast 5.6
 buildImage phpunit5
 
 # requires 5.6.4
-assertVersion 5.6.4
+assertVersionAtLeast 5.6.4
 buildImage laravel5.3
 
 # requires 7.0
-assertVersion 7.0
+assertVersionAtLeast 7.0
 buildImage phpunit6
 
 # requires 7.1
-assertVersion 7.1
+assertVersionAtLeast 7.1
 buildImage phpunit7
 
 # requires 7.1.3
-assertVersion 7.1.3
+assertVersionAtLeast 7.1.3
 buildImage laravel5.6
 buildImage laravel5.7
