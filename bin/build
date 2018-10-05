@@ -47,9 +47,11 @@ versionBetween() {
 # Arguments:
 #  1 the 1st version to compare
 #  2 the 2nd version to compare
+# Globals:
+#  REPO  the name of Docker Hub repo where the images are hosted
 #######################################
 versionGreaterThan() {
-  docker container run --rm chekote/php:7 php -r "version_compare('$1', '$2', '>') ? exit(1) : exit(0);";
+  docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '>') ? exit(1) : exit(0);";
   return $?
 }
 
@@ -61,7 +63,7 @@ versionGreaterThan() {
 #  2 the 2nd version to compare
 #######################################
 versionLessThan() {
-  docker container run --rm chekote/php:7 php -r "version_compare('$1', '$2', '<') ? exit(1) : exit(0);";
+  docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '<') ? exit(1) : exit(0);";
   return $?
 }
 
@@ -85,6 +87,7 @@ assertVersionAtLeast() {
 # Arguments:
 #  1 the image to build. Must have a matching .docker file in the root of the project.
 # Globals:
+#   REPO          the name of Docker Hub repo where the images are hosted
 #   MAJOR_VERSION the major PHP version to build images for
 #   MINOR_VERSION the minor PHP version to build images for
 #   PATCH_VERSION the patch PHP version that was built
@@ -106,13 +109,13 @@ buildImage() {
 
   echo ""
   echo "Building ${IMAGE} image"
-  docker image build -f ${IMAGE}.docker --build-arg PHP_VERSION=${MAJOR_VERSION}.${MINOR_VERSION} -t chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} .
+  docker image build -f ${IMAGE}.docker --build-arg PHP_VERSION=${MAJOR_VERSION}.${MINOR_VERSION} -t ${REPO}:${MAJOR_TAG} .
   exitCheck $?
 
   printf "${COLOR_GREEN}Successfully built image${COLOR_RESET}\n"
 
   if [ "${IMAGE}" = "php" ]; then
-    PATCH_VERSION=`docker run chekote/php:${MAJOR_VERSION} php -r "echo explode('.', substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-')))[2];"`
+    PATCH_VERSION=`docker run ${REPO}:${MAJOR_VERSION} php -r "echo explode('.', substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-')))[2];"`
     echo "PHP Patch Version: ${PATCH_VERSION}"
   fi
 
