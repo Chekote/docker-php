@@ -22,6 +22,38 @@ exitCheck() {
 }
 
 #######################################
+# Checks that the PHP version being built is between the two specified versions (inclusive)
+#
+# Arguments:
+#  1 the lowest version of the range to check
+#  2 the highest version of the range to check
+#######################################
+versionBetween() {
+  ACTUAL_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
+  if versionLessThan ${ACTUAL_VERSION} $1; then
+    return 1;
+  fi
+
+  if versionGreaterThan ${ACTUAL_VERSION} $2; then
+    return 1;
+  fi
+
+  return 0;
+}
+
+#######################################
+# Checks two PHP versions to determine if the 1st is greater than the 2nd
+#
+# Arguments:
+#  1 the 1st version to compare
+#  2 the 2nd version to compare
+#######################################
+versionGreaterThan() {
+  docker container run --rm chekote/php:7 php -r "version_compare('$1', '$2', '>') ? exit(1) : exit(0);";
+  return $?
+}
+
+#######################################
 # Checks two PHP versions to determine if the 1st is less than the 2nd
 #
 # Arguments:
@@ -136,16 +168,22 @@ assertVersionAtLeast 5.3.3
 buildImage behat3.4
 
 # requires 5.5.9
-assertVersionAtLeast 5.5.9
-buildImage laravel5.1
+if versionBetween 5.5.9 7.1.16; then
+  buildImage laravel5.1
+else
+  printf "${COLOR_YELLOW}Skipping Laravel 5.1. PHP version is not between 5.5.9 & 7.1.16${COLOR_RESET}\n"
+fi
 
 # requires 5.6
 assertVersionAtLeast 5.6
 buildImage phpunit5
 
 # requires 5.6.4
-assertVersionAtLeast 5.6.4
-buildImage laravel5.3
+if versionBetween 5.6.4 7.1.16; then
+  buildImage laravel5.3
+else
+  printf "${COLOR_YELLOW}Skipping Laravel 5.3. PHP version is not between 5.6.4 & 7.1.16${COLOR_RESET}\n"
+fi
 
 # requires 7.0
 assertVersionAtLeast 7.0
