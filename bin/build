@@ -5,6 +5,8 @@ COLOR_RED="\033[0;31m"
 COLOR_RESET='\033[0m'
 COLOR_YELLOW='\033[1;33m'
 
+REPO=chekote/php
+
 PATCH_VERSION=
 #######################################
 # Checks the exit code passed and exits with it if it is not zero
@@ -61,6 +63,9 @@ buildImage() {
     TAG_SUFFIX="-${IMAGE}"
   fi
 
+  local MAJOR_TAG=${MAJOR_VERSION}${TAG_SUFFIX}
+  local MINOR_TAG=${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}
+
   echo ""
   echo "Building ${IMAGE} image"
   docker image build -f ${IMAGE}.docker --build-arg PHP_VERSION=${MAJOR_VERSION}.${MINOR_VERSION} -t chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} .
@@ -72,6 +77,8 @@ buildImage() {
     PATCH_VERSION=`docker run chekote/php:${MAJOR_VERSION} php -r "echo explode('.', substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-')))[2];"`
     echo "PHP Patch Version: ${PATCH_VERSION}"
   fi
+
+  local PATCH_TAG=${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}
 
   echo ""
   echo "Tagging image"
@@ -85,17 +92,21 @@ buildImage() {
 
   echo ""
   echo "Pushing ${IMAGE} image"
-  docker push chekote/php:${MAJOR_VERSION}${TAG_SUFFIX}
-  exitCheck $?
-  printf "${COLOR_GREEN}Successfully pushed image chekote/php:${MAJOR_VERSION}${TAG_SUFFIX}${COLOR_RESET}\n"
+  pushImage ${REPO}:${MAJOR_TAG}
+  pushImage ${REPO}:${MINOR_TAG}
+  pushImage ${REPO}:${PATCH_TAG}
+}
 
-  docker push chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}
+#######################################
+# Pushes the specified image
+#
+# Arguments:
+#  1 the image to push
+#######################################
+pushImage() {
+  docker image push $1
   exitCheck $?
-  printf "${COLOR_GREEN}Successfully pushed image chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}${COLOR_RESET}\n"
-
-  docker push chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}
-  exitCheck $?
-  printf "${COLOR_GREEN}Successfully pushed image chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}${COLOR_RESET}\n"
+  printf "${COLOR_GREEN}Successfully pushed image $1${COLOR_RESET}\n"
 }
 
 echo "Please enter the major PHP version (e.g. 5, 7), followed by [ENTER]:"
