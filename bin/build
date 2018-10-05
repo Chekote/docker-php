@@ -82,12 +82,8 @@ buildImage() {
 
   echo ""
   echo "Tagging image"
-  docker image tag chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}
-  exitCheck $?
-
-  docker image tag chekote/php:${MAJOR_VERSION}${TAG_SUFFIX} chekote/php:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}
-  exitCheck $?
-
+  tagImage ${REPO}:${MAJOR_TAG} ${REPO}:${MINOR_TAG}
+  tagImage ${REPO}:${MAJOR_TAG} ${REPO}:${PATCH_TAG}
   printf "${COLOR_GREEN}Successfully created image tags${COLOR_RESET}\n"
 
   echo ""
@@ -107,6 +103,19 @@ pushImage() {
   docker image push $1
   exitCheck $?
   printf "${COLOR_GREEN}Successfully pushed image $1${COLOR_RESET}\n"
+}
+
+#######################################
+# Tags the specified image
+#
+# Arguments
+#  1 the image to tag
+#  2 the tag to use
+#######################################
+tagImage() {
+  docker image tag $1 $2
+  exitCheck $?
+  printf "Successfully tagged $2\n"
 }
 
 echo "Please enter the major PHP version (e.g. 5, 7), followed by [ENTER]:"
