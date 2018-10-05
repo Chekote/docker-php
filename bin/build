@@ -82,12 +82,18 @@ assertVersionAtLeast() {
 #######################################
 # Builds and pushes all of the PHP images for the current major and minor version
 #
+# Arguments:
+#  1 the image to build. Must have a matching .docker file in the root of the project.
 # Globals:
 #   MAJOR_VERSION the major PHP version to build images for
 #   MINOR_VERSION the minor PHP version to build images for
+#   PATCH_VERSION the patch PHP version that was built
 #######################################
 buildImage() {
-  IMAGE=$1
+  local IMAGE=$1
+  local TAG_SUFFIX
+  local PATCH_TAG
+  local SHA
 
   if [ "${IMAGE}" = "php" ]; then
     TAG_SUFFIX=""
