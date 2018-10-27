@@ -9,6 +9,26 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 REPO=chekote/php
 
 PATCH_VERSION=
+TOKEN=
+
+#######################################
+# Grabs a token from auth.docker.com for use with the Docker API V2
+#
+# Globals:
+#   TOKEN
+#######################################
+dockerAuth() {
+  local RESPONSE="$(curl 'https://auth.docker.io/token?service=registry.docker.io&scope=repository:'chekote/php':pull' 2>/dev/null)"
+  TOKEN=$(echo "$RESPONSE" | jq -r .token)
+
+  if [ ${TOKEN} == null ]; then
+    out.error "Docker login failed: $RESPONSE"
+    return 1
+  fi
+
+  return 0
+}
+
 #######################################
 # Checks the exit code passed and exits with it if it is not zero
 #
@@ -160,6 +180,8 @@ tagImage() {
   exitCheck $?
   out.success "Successfully tagged $2"
 }
+
+dockerAuth
 
 out.info "Please enter the major PHP version (e.g. 5, 7), followed by [ENTER]:"
 read MAJOR_VERSION
