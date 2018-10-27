@@ -30,6 +30,18 @@ dockerAuth() {
 }
 
 #######################################
+# Gets the SHA for a tag
+#
+# Arguments:
+#  1 the tag
+#######################################
+tagSHA() {
+  log.info "Getting SHA for tag $1"
+  curl -s -H "Authorization: Bearer ${TOKEN}" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+      https://index.docker.io/v2/chekote/php/manifests/$1 | jq -r .config.digest | cut -d':' -f 2
+}
+
+#######################################
 # Checks the exit code passed and exits with it if it is not zero
 #
 # Arguments:
@@ -150,10 +162,31 @@ buildImage() {
   out.success "Successfully created image tags"
 
   out.info ""
-  out.info "Pushing ${IMAGE} image"
-  pushImage ${REPO}:${MAJOR_TAG}
-  pushImage ${REPO}:${MINOR_TAG}
-  pushImage ${REPO}:${PATCH_TAG}
+  out.info "Pushing ${IMAGE} images"
+  SHA=$(docker image inspect ${REPO}:${MAJOR_TAG} | jq -r '.[0].Id' | cut -d':' -f 2);
+  pushIfShaDiff "$MAJOR_TAG" "$SHA"
+  pushIfShaDiff "$MINOR_TAG" "$SHA"
+  pushIfShaDiff "$PATCH_TAG" "$SHA"
+  out.success "Successfully pushed images"
+}
+
+#######################################
+# Arguments:
+#   1     the tag to push
+#   2     the sha of the image currently being built
+# Globals:
+#   IMAGE         the name of the image currently being build
+#   REPO          the name of Docker Hub repo where the images are hosted
+#######################################
+pushIfShaDiff() {
+  local TAG=$1;
+  local SHA=$2;
+
+  if [ "$SHA" == $(tagSHA "$TAG") ]; then
+    echo "Skipping push for tag $TAG. Published tag already matches SHA"
+  else
+    pushImage "$REPO:$TAG"
+  fi
 }
 
 #######################################
