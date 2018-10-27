@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+COLOR_GREEN='\033[0;32m'
+COLOR_RED="\033[0;31m"
+COLOR_RESET='\033[0m'
+COLOR_YELLOW='\033[1;33m'
