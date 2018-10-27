@@ -30,6 +30,95 @@ dockerAuth() {
 }
 
 #######################################
+# Provides the latest tag that has been published for the specified tag and suffix
+#
+# Will check if "$REPO:$TAG$SUFFIX" is available first, followed by "$REPO:$TAG-{a..z}$SUFFIX". The last tag that
+# exists will be echoed to stdout. If the tag does not exist, then an empty string will be echoed to stdout.
+#
+# Arguments:
+#   1 the tag, e.g. 5.3.6
+#   2 the tag suffix, e.g. -phpunit6
+#######################################
+latestTag() {
+  local TAG=$1
+  local SUFFIX=$2
+  local LATEST_TAG
+
+  log.info "Checking if ${TAG}${SUFFIX} exists"
+  if ! tagExists "${TAG}${SUFFIX}"; then
+    log.info "Tag ${TAG}${SUFFIX} does not exist"
+    log.info "There is no latest tag"
+    echo ""
+    return 0
+  else
+    log.info "Tag ${TAG}${SUFFIX} exists"
+  fi
+
+  LATEST_TAG="$TAG$SUFFIX"
+  log.info "latestTag::LATEST_TAG is now $LATEST_TAG"
+  for X in {a..z}; do
+    NEXT_TAG="$TAG.$X$SUFFIX"
+    if tagExists "$NEXT_TAG"; then
+      log.info "Tag $NEXT_TAG exists"
+      LATEST_TAG="$NEXT_TAG"
+      log.info "latestTag::LATEST_TAG is now $LATEST_TAG"
+    else
+      log.info "Tag $NEXT_TAG does not exist"
+      log.info "$LATEST_TAG is the latest tag"
+      break
+    fi
+  done
+
+  log.info "returning $LATEST_TAG"
+  echo "$LATEST_TAG"
+}
+
+#######################################
+# Determines the next available tag for the specified tag and suffix
+#
+# Will check if "$REPO:$TAG$SUFFIX" is available first, and if not will check"$REPO:$TAG-{a..z}$SUFFIX".
+# If an available tag is found, it will be echoed to stdout
+#
+# Arguments:
+#   1 the tag, e.g. 5.3.6
+#   2 the tag suffix, e.g. -phpunit6
+# Returns:
+#   0 if a next available tag was found. 1 if no tags are available.
+#######################################
+nextAvailableTag() {
+  local TAG=$1
+  local SUFFIX=$2
+  local NEXT_TAG
+
+  if ! tagExists "$TAG$SUFFIX"; then
+    echo "$TAG$SUFFIX"
+    return 0
+  fi
+
+  for X in {a..z}; do
+    NEXT_TAG="$TAG.$X$SUFFIX"
+    if ! tagExists "$NEXT_TAG"; then
+      echo "$NEXT_TAG"
+      return 0
+    fi
+  done
+
+  echo "No available tags for $TAG$SUFFIX"
+  return 1
+}
+
+#######################################
+# Checks if the specified tag exists in the chekote/php repo
+#
+# Arguments:
+#  1 the tag
+#######################################
+tagExists() {
+  log.info "Checking for existence of tag $1"
+  curl -s -H "Authorization: Bearer ${TOKEN}" https://index.docker.io/v2/chekote/php/tags/list | jq -r .tags | grep "\"$1\"" > /dev/null 2>&1
+}
+
+#######################################
 # Gets the SHA for a tag
 #
 # Arguments:
@@ -39,6 +128,45 @@ tagSHA() {
   log.info "Getting SHA for tag $1"
   curl -s -H "Authorization: Bearer ${TOKEN}" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
       https://index.docker.io/v2/chekote/php/manifests/$1 | jq -r .config.digest | cut -d':' -f 2
+}
+
+#######################################
+# Gets the patch tag for the image being built
+#
+# Arguments:
+#  1 the tag
+#  1 the tag suffix
+#  1 the SHA of the image
+#######################################
+patchTag() {
+  local TAG=$1
+  local SUFFIX=$2
+  local SHA=$3
+  local LATEST_TAG
+
+  log.info "Checking if ${TAG}${SUFFIX} exists"
+  if ! tagExists "${TAG}${SUFFIX}"; then
+    log.info "Tag ${TAG}${SUFFIX} does not exist"
+    echo "${TAG}${SUFFIX}"
+    return 0
+  else
+    log.info "Tag ${TAG}${SUFFIX} exists"
+  fi
+
+  log.info "patchTag::LATEST_TAG before: '$LATEST_TAG'"
+  LATEST_TAG=$(latestTag "$TAG" "$SUFFIX")
+  log.info "patchTag::LATEST_TAG after: '$LATEST_TAG'"
+
+  LATEST_TAG_SHA=$(tagSHA $LATEST_TAG);
+  log.info "Latest Tag ($LATEST_TAG) SHA: $LATEST_TAG_SHA"
+  log.info "New SHA: $SHA"
+
+  if [ "$LATEST_TAG_SHA" = "$SHA" ]; then
+    echo "$LATEST_TAG"
+    return 0
+  fi
+
+  nextAvailableTag "${TAG}" "${SUFFIX}"
 }
 
 #######################################
@@ -153,7 +281,11 @@ buildImage() {
     log.info "PHP Patch Version: ${PATCH_VERSION}"
   fi
 
-  local PATCH_TAG=${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}${TAG_SUFFIX}
+  SHA=$(docker image inspect ${REPO}:${MAJOR_TAG} | jq -r '.[0].Id' | cut -d':' -f 2);
+
+  log.info "Determining Patch Tag"
+  PATCH_TAG=$(patchTag "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION" "$TAG_SUFFIX" "$SHA")
+  log.info "Patch Tag: $PATCH_TAG"
 
   out.info ""
   out.info "Tagging image"
@@ -163,7 +295,6 @@ buildImage() {
 
   out.info ""
   out.info "Pushing ${IMAGE} images"
-  SHA=$(docker image inspect ${REPO}:${MAJOR_TAG} | jq -r '.[0].Id' | cut -d':' -f 2);
   pushIfShaDiff "$MAJOR_TAG" "$SHA"
   pushIfShaDiff "$MINOR_TAG" "$SHA"
   pushIfShaDiff "$PATCH_TAG" "$SHA"
