@@ -23,7 +23,7 @@ dockerAuth() {
   local RESPONSE="$(curl 'https://auth.docker.io/token?service=registry.docker.io&scope=repository:'chekote/php':pull' 2>/dev/null)"
   TOKEN=$(echo "$RESPONSE" | jq -r .token)
 
-  if [ ${TOKEN} == null ]; then
+  if [ "$TOKEN" == null ]; then
     out.error "Docker login failed: $RESPONSE"
     return 1
   fi
@@ -46,14 +46,14 @@ latestTag() {
   local SUFFIX=$2
   local LATEST_TAG
 
-  log.info "Checking if ${TAG}${SUFFIX} exists"
-  if ! tagExists "${TAG}${SUFFIX}"; then
-    log.info "Tag ${TAG}${SUFFIX} does not exist"
+  log.info "Checking if $TAG$SUFFIX exists"
+  if ! tagExists "$TAG$SUFFIX"; then
+    log.info "Tag $TAG$SUFFIX does not exist"
     log.info "There is no latest tag"
     echo ""
     return 0
   else
-    log.info "Tag ${TAG}${SUFFIX} exists"
+    log.info "Tag $TAG$SUFFIX exists"
   fi
 
   LATEST_TAG="$TAG$SUFFIX"
@@ -119,7 +119,7 @@ nextAvailableTag() {
 #######################################
 tagExists() {
   log.info "Checking for existence of tag $1"
-  curl -s -H "Authorization: Bearer ${TOKEN}" https://index.docker.io/v2/chekote/php/tags/list | jq -r .tags | grep "\"$1\"" > /dev/null 2>&1
+  curl -s -H "Authorization: Bearer $TOKEN" https://index.docker.io/v2/chekote/php/tags/list | jq -r .tags | grep "\"$1\"" > /dev/null 2>&1
 }
 
 #######################################
@@ -130,7 +130,7 @@ tagExists() {
 #######################################
 tagSHA() {
   log.info "Getting SHA for tag $1"
-  curl -s -H "Authorization: Bearer ${TOKEN}" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+  curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
       https://index.docker.io/v2/chekote/php/manifests/$1 | jq -r .config.digest | cut -d':' -f 2
 }
 
@@ -150,20 +150,20 @@ patchTag() {
   local SHA=$3
   local LATEST_TAG
 
-  log.info "Checking if ${TAG}${SUFFIX} exists"
-  if ! tagExists "${TAG}${SUFFIX}"; then
-    log.info "Tag ${TAG}${SUFFIX} does not exist"
-    echo "${TAG}${SUFFIX}"
+  log.info "Checking if $TAG$SUFFIX exists"
+  if ! tagExists "$TAG$SUFFIX"; then
+    log.info "Tag $TAG$SUFFIX does not exist"
+    echo "$TAG$SUFFIX"
     return 0
   else
-    log.info "Tag ${TAG}${SUFFIX} exists"
+    log.info "Tag $TAG$SUFFIX exists"
   fi
 
   log.info "patchTag::LATEST_TAG before: '$LATEST_TAG'"
   LATEST_TAG=$(latestTag "$TAG" "$SUFFIX")
   log.info "patchTag::LATEST_TAG after: '$LATEST_TAG'"
 
-  LATEST_TAG_SHA=$(tagSHA $LATEST_TAG);
+  LATEST_TAG_SHA=$(tagSHA "$LATEST_TAG");
   log.info "Latest Tag ($LATEST_TAG) SHA: $LATEST_TAG_SHA"
   log.info "New SHA: $SHA"
 
@@ -172,7 +172,7 @@ patchTag() {
     return 0
   fi
 
-  nextAvailableTag "${TAG}" "${SUFFIX}"
+  nextAvailableTag "$TAG" "$SUFFIX"
 }
 
 #######################################
@@ -198,12 +198,12 @@ exitCheck() {
 #  0 if the version being build is between the two specified versions. 1 if not.
 #######################################
 versionBetween() {
-  ACTUAL_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
-  if versionLessThan ${ACTUAL_VERSION} $1; then
+  ACTUAL_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+  if versionLessThan "$ACTUAL_VERSION" "$1"; then
     return 1;
   fi
 
-  if versionGreaterThan ${ACTUAL_VERSION} $2; then
+  if versionGreaterThan "$ACTUAL_VERSION" "$2"; then
     return 1;
   fi
 
@@ -222,7 +222,7 @@ versionBetween() {
 #  0 if the 1st version is greater than the 2nd. 1 if not.
 #######################################
 versionGreaterThan() {
-  docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '>') ? exit(0) : exit(1);";
+  docker container run --rm "$REPO:7" php -r "version_compare('$1', '$2', '>') ? exit(0) : exit(1);";
   return $?
 }
 
@@ -247,9 +247,9 @@ versionLessThan() {
 #  1 the version to assert
 #######################################
 assertVersionAtLeast() {
-  ACTUAL_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
-  if versionLessThan ${ACTUAL_VERSION} $1; then
-    out.warn "No further images supported for PHP version ${ACTUAL_VERSION}. Quitting..."
+  ACTUAL_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+  if versionLessThan "$ACTUAL_VERSION" "$1"; then
+    out.warn "No further images supported for PHP version $ACTUAL_VERSION. Quitting..."
     exit 0
   fi
 }
@@ -272,28 +272,28 @@ buildImage() {
   local PATCH_TAG
   local SHA
 
-  if [ "${IMAGE}" = "php" ]; then
+  if [ "$IMAGE" = "php" ]; then
     TAG_SUFFIX=""
   else
-    TAG_SUFFIX="-${IMAGE}"
+    TAG_SUFFIX="-$IMAGE"
   fi
 
-  local MAJOR_TAG=${MAJOR_VERSION}${TAG_SUFFIX}
-  local MINOR_TAG=${MAJOR_VERSION}.${MINOR_VERSION}${TAG_SUFFIX}
+  local MAJOR_TAG="$MAJOR_VERSION$TAG_SUFFIX"
+  local MINOR_TAG="$MAJOR_VERSION.$MINOR_VERSION$TAG_SUFFIX"
 
   out.info ""
-  out.info "Building ${IMAGE} image"
-  docker image build -f ${IMAGE}.docker --build-arg PHP_VERSION=${MAJOR_VERSION}.${MINOR_VERSION} -t ${REPO}:${MAJOR_TAG} . > logs/${IMAGE}.log 2>&1
+  out.info "Building $IMAGE image"
+  docker image build -f "$IMAGE.docker" --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$REPO:$MAJOR_TAG" . > "logs/$IMAGE.log" 2>&1
   exitCheck $?
 
   out.success "Successfully built image"
 
-  if [ "${IMAGE}" = "php" ]; then
-    PATCH_VERSION=`docker run ${REPO}:${MAJOR_VERSION} php -r "echo explode('.', substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-')))[2];"`
-    log.info "PHP Patch Version: ${PATCH_VERSION}"
+  if [ "$IMAGE" = "php" ]; then
+    PATCH_VERSION=`docker run "$REPO:$MAJOR_VERSION" php -r "echo explode('.', substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-')))[2];"`
+    log.info "PHP Patch Version: $PATCH_VERSION"
   fi
 
-  SHA=$(docker image inspect ${REPO}:${MAJOR_TAG} | jq -r '.[0].Id' | cut -d':' -f 2);
+  SHA=$(docker image inspect "$REPO:$MAJOR_TAG" | jq -r '.[0].Id' | cut -d':' -f 2);
 
   log.info "Determining Patch Tag"
   PATCH_TAG=$(patchTag "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION" "$TAG_SUFFIX" "$SHA")
@@ -301,12 +301,12 @@ buildImage() {
 
   out.info ""
   out.info "Tagging image"
-  tagImage ${REPO}:${MAJOR_TAG} ${REPO}:${MINOR_TAG}
-  tagImage ${REPO}:${MAJOR_TAG} ${REPO}:${PATCH_TAG}
+  tagImage "$REPO:$MAJOR_TAG" "$REPO:$MINOR_TAG"
+  tagImage "$REPO:$MAJOR_TAG" "$REPO:$PATCH_TAG"
   out.success "Successfully created image tags"
 
   out.info ""
-  out.info "Pushing ${IMAGE} images"
+  out.info "Pushing $IMAGE images"
   pushIfShaDiff "$MAJOR_TAG" "$SHA"
   pushIfShaDiff "$MINOR_TAG" "$SHA"
   pushIfShaDiff "$PATCH_TAG" "$SHA"
