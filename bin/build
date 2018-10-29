@@ -16,6 +16,8 @@ TOKEN=
 #
 # Globals:
 #   TOKEN
+# Return:
+#  0 if the auth succeed. 1 if not.
 #######################################
 dockerAuth() {
   local RESPONSE="$(curl 'https://auth.docker.io/token?service=registry.docker.io&scope=repository:'chekote/php':pull' 2>/dev/null)"
@@ -112,6 +114,8 @@ nextAvailableTag() {
 #
 # Arguments:
 #  1 the tag
+# Return:
+#  0 if the tag exists, 1 if not (or an error occurred).
 #######################################
 tagExists() {
   log.info "Checking for existence of tag $1"
@@ -137,6 +141,8 @@ tagSHA() {
 #  1 the tag
 #  1 the tag suffix
 #  1 the SHA of the image
+# Returns:
+#   0 if a patch tag could be determined. 1 if no tags are available.
 #######################################
 patchTag() {
   local TAG=$1
@@ -188,6 +194,8 @@ exitCheck() {
 # Arguments:
 #  1 the lowest version of the range to check
 #  2 the highest version of the range to check
+# Return:
+#  0 if the version being build is between the two specified versions. 1 if not.
 #######################################
 versionBetween() {
   ACTUAL_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
@@ -210,6 +218,8 @@ versionBetween() {
 #  2 the 2nd version to compare
 # Globals:
 #  REPO  the name of Docker Hub repo where the images are hosted
+# Return:
+#  0 if the 1st version is greater than the 2nd. 1 if not.
 #######################################
 versionGreaterThan() {
   docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '>') ? exit(0) : exit(1);";
@@ -222,6 +232,8 @@ versionGreaterThan() {
 # Arguments:
 #  1 the 1st version to compare
 #  2 the 2nd version to compare
+# Return:
+#  0 if the 1st version is less than the 2nd. 1 if not.
 #######################################
 versionLessThan() {
   docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '<') ? exit(0) : exit(1);";
