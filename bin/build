@@ -212,7 +212,7 @@ versionBetween() {
 #  REPO  the name of Docker Hub repo where the images are hosted
 #######################################
 versionGreaterThan() {
-  docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '>') ? exit(1) : exit(0);";
+  docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '>') ? exit(0) : exit(1);";
   return $?
 }
 
@@ -224,7 +224,7 @@ versionGreaterThan() {
 #  2 the 2nd version to compare
 #######################################
 versionLessThan() {
-  docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '<') ? exit(1) : exit(0);";
+  docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '<') ? exit(0) : exit(1);";
   return $?
 }
 
@@ -236,7 +236,7 @@ versionLessThan() {
 #######################################
 assertVersionAtLeast() {
   ACTUAL_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
-  if versionLessThan $1 ${ACTUAL_VERSION}; then
+  if versionLessThan ${ACTUAL_VERSION} $1; then
     out.warn "No further images supported for PHP version ${ACTUAL_VERSION}. Quitting..."
     exit 0
   fi
