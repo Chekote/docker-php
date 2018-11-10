@@ -28,11 +28,11 @@ To set the UID for the initial process, you should set a `LOCAL_USER_ID` environ
 
     docker run -e LOCAL_USER_ID=1000 chekote/php:5.6.30-a php -v
 
-## PHP-FPM process UID
+## www-data UID (PHP-FPM runs as this user)
 
-To set the UID for the PHP-FPM process, you should set the `PHP_FPM_USER_ID` environmental variable on the container. e.g:
+To set the UID for the www-data user (and by extension, the PHP-FPM process), you should set the `WWW_DATA_USER_ID` environmental variable on the container. e.g:
 
-    docker run -e PHP_FPM_USER_ID=1000 chekote/php:5.6.30-a php-fpm5.6
+    docker run -e WWW_DATA_USER_ID=1000 chekote/php:5.6.30-a php-fpm5.6
 
 # php.ini directives
 
