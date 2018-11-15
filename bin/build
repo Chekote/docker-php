@@ -341,7 +341,7 @@ pushIfShaDiff() {
 pushImage() {
   docker image push $1
   exitCheck $?
-  out.success "Successfully pushed image"
+  out.success "Successfully pushed image $1"
 }
 
 #######################################
