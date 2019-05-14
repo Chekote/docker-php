@@ -1,0 +1,38 @@
+# chekote/php:alpine-${PHP_VERSION}
+FROM chekote/alpine:3.9.4
+
+ARG PHP_MAJOR_VERSION=7
+ENV PHP_MAJOR_VERSION ${PHP_MAJOR_VERSION}
+
+RUN apk add \
+    #
+    # usermod
+        shadow \
+    # Install PHP & curl (for composer)
+        curl \
+        php${PHP_MAJOR_VERSION} \
+        php${PHP_MAJOR_VERSION}-curl \
+        php${PHP_MAJOR_VERSION}-fpm \
+        php${PHP_MAJOR_VERSION}-opcache && \
+    #
+    # Configure PHP
+    sed -i "s!display_startup_errors = Off!display_startup_errors = On!g" /etc/php${PHP_MAJOR_VERSION}/php.ini && \
+    #
+    # Configure FPM
+    sed -i "s!;daemonize = yes!daemonize = no!g" /etc/php${PHP_MAJOR_VERSION}/php-fpm.conf && \
+    sed -i "s!;error_log = log/php${PHP_MAJOR_VERSION}/error.log!error_log = /proc/self/fd/2!g" /etc/php${PHP_MAJOR_VERSION}/php-fpm.conf && \
+    #
+    # Configure FPM workers
+    sed -i "s!listen = /127.0.0.1:9000!listen = 0.0.0.0:9000!g" /etc/php${PHP_MAJOR_VERSION}/php-fpm.d/www.conf && \
+    sed -i "s!;catch_workers_output = yes!catch_workers_output = yes!g" /etc/php${PHP_MAJOR_VERSION}/php-fpm.d/www.conf && \
+    sed -i "s![error_log] = /var/log/php${PHP_MAJOR_VERSION}/$pool.error.log![error_log] = /proc/self/fd/2!g" /etc/php${PHP_MAJOR_VERSION}/php-fpm.d/www.conf
+
+VOLUME ["/workdir"]
+WORKDIR /workdir
+
+EXPOSE 9000
+
+COPY alpine/entrypoint.sh /usr/local/bin/entrypoint-php.sh
+COPY check_php_version /usr/local/bin
+
+ENTRYPOINT ["/usr/local/bin/entrypoint-php.sh"]
