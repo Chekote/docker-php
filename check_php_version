@@ -10,7 +10,9 @@ if (count($argv) != 2 && count($argv) != 3) {
     exit(1);
 }
 
-$actual_version = substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-'));
+$actual_version = strpos(PHP_VERSION, '-') === false
+    ? PHP_VERSION
+    : substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-'));
 
 $min_version = $argv[1];
 if (version_compare($actual_version, $min_version, '<')) {
