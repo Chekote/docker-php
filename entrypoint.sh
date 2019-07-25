@@ -1,7 +1,13 @@
 #!/usr/bin/env sh
 
 if [ "$PHP_FPM_USER_ID" != "" ]; then
-    usermod -u $PHP_FPM_USER_ID nobody
+    (>&2 echo "Warning: PHP_FPM_USER_ID is deprecated. Please use WWW_DATA_USER_ID instead.")
+    WWW_DATA_USER_ID=$PHP_FPM_USER_ID
+fi
+
+# Set the uid that www-data will run as if one was specified
+if [ "$WWW_DATA_USER_ID" != "" ]; then
+    usermod -u $WWW_DATA_USER_ID www-data
 fi
 
 replace_in_file() {
