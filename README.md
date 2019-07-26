@@ -36,16 +36,29 @@ To set the UID for the www-data user (and by extension, the PHP-FPM process), yo
 
 # php.ini directives
 
-You can modify certain php.ini directives by setting environmental variables within the container. The following is a list of environmental variables and the php.ini directives that they correspond to:
+You can modify any php.ini directives by setting environmental variables within the container. It can be accomplish by prefixing the variable with the place to be replace ( FPM, CLI or ALL for both ).
+If the variable contains a dot `.` in it you can accomplish this by using a double underscore `__` on the variable name. The following are some examples of how to accomplish this:
 
-| environmental variable  | php.ini directives                                                                       |
-|-------------------------|---------------------------------------------------------------------------------------|
-| `PHP_POST_MAX_SIZE`       | [`post_max_size`](http://php.net/manual/en/ini.core.php#ini.post-max-size)              |
-| `PHP_UPLOAD_MAX_FILESIZE` | [`upload_max_filesize`](http://php.net/manual/en/ini.core.php#ini.upload-max-filesize)  |
+| environmental variable         | php.ini directives                                                                                        | php.ini config file |
+|--------------------------------|-----------------------------------------------------------------------------------------------------------|---------------------|
+| `PHP_FPM_POST_MAX_SIZE`        | [`post_max_size`](http://php.net/manual/en/ini.core.php#ini.post-max-size)                                | fpm                 |
+| `PHP_ALL_UPLOAD_MAX_FILESIZE`  | [`upload_max_filesize`](http://php.net/manual/en/ini.core.php#ini.upload-max-filesize)                    | fpm, cli            |
+| `PHP_CLI_MAX_FILE_UPLOADS`     | [`max_file_uploads`](https://php.net/manual/en/ini.core.php#ini.max-file-uploads)                         | cli                 |
+| `PHP_FPM_PM__MAX_CHILDREN`     | [`pm.max_children`](https://www.php.net/manual/en/install.fpm.configuration.php#pm.max-children)          | fpm                 |
+| `PHP_ALL_SESSION__SAVE_PATH`   | [`session.save_path`](https://www.php.net/manual/en/session.configuration.php#ini.session.save-path)      | fpm, cli            |
+| `PHP_ALL_SESSION__SAVE_HANDLER`| [`session.save_handler`](https://www.php.net/manual/en/session.configuration.php#ini.session.save-handler)| fpm, cli            |
 
-e.g. the following will start a PHP container with the `post_max_size` to 30 Megabytes:
+e.g. the following will start a PHP container with the `post_max_size` to 30 Megabytes for both CLI and FPM:
 
-`docker run -e PHP_POST_MAX_SIZE=30M chekote/php:7`
+`docker run -e PHP_ALL_UPLOAD_MAX_FILESIZE=30M chekote/php:7`
+
+and the following will start a PHP container with the `pm.max_children` setting to 50 for FPM processes:
+
+`docker run -e PHP_FPM_PM__MAX_CHILDREN=50 chekote/php:7`
+
+and the following will start a PHP container with the `session.save_handler` on both FPM and CLI using redis:
+
+`docker run -e PHP_ALL_SESSION__SAVE_HANDLER=redis chekote/php:7`
 
 # Distribution
 
