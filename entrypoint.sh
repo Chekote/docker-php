@@ -31,7 +31,7 @@ replace_in_file() {
 
 # Set php.ini options
 for TYPE in cli fpm; do
-    PHP_INI=/etc/php/${PHP_MAJOR_VERSION}/${TYPE}/php.ini
+    PHP_INI=/etc/php/${PHP_VERSION}/${TYPE}/php.ini
     VAR_TYPE=`echo "PHP_$TYPE" | tr '[:lower:]' '[:upper:]'`
 
     # Replace all variables ( prefixed by PHP_TYPE ) on the proper PHP type file
