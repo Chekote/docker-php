@@ -7,14 +7,35 @@ fi
 # Set php.ini options
 PHP_INI=/etc/php$PHP_MAJOR_VERSION/php.ini
 
-# Update the PHP upload_max_filesize setting if one was specified
-if [ "$PHP_UPLOAD_MAX_FILESIZE" != "" ]; then
-    sed -i "s!upload_max_filesize = 2M!upload_max_filesize = $PHP_UPLOAD_MAX_FILESIZE!g" "$PHP_INI"
-fi
+replace_in_file() {
+    PHP_FILE=$1
+    VAR_MATCH=$2
+    REPLACE_VARS=`printenv | awk -F'=' '{print $1}' | grep -E "^$2"`
 
-# Update the post_max_size setting if one was specified
-if [ "$PHP_POST_MAX_SIZE" != "" ]; then
-    sed -i "s!post_max_size = 8M!post_max_size = $PHP_POST_MAX_SIZE!g" "$PHP_INI"
-fi
+    # If there are variables to be replace move forward
+    if [ ! -z "$REPLACE_VARS" ]; then
+      for VAR_NAME in $REPLACE_VARS; do
+        # get the directive name by removing the prefixes e.g. PHP_CLI and making them lowercase.
+        # if there are any double '_' replace with a dot.
+        DIRECTIVE=`echo "$VAR_NAME" | cut -c9- | tr '[:upper:]' '[:lower:]' | sed 's/__/./g'`
+        VALUE=`printenv "$VAR_NAME"`
+
+        # Replace the variable only if it starts with the name of the directive and remove optional ';'
+        sed -i "s!^\(;\)\{0,1\}$DIRECTIVE = [^\n]\+!$DIRECTIVE = $VALUE!g" "$PHP_FILE"
+      done
+    fi
+}
+
+# Set php.ini options
+for TYPE in cli fpm; do
+    PHP_INI=/etc/php/$PHP_MAJOR_VERSION/$TYPE/php.ini
+    VAR_TYPE=`echo "PHP_$TYPE" | tr '[:lower:]' '[:upper:]'`
+
+    # Replace all variables ( prefixed by PHP_TYPE ) on the proper PHP type file
+    replace_in_file $PHP_INI $VAR_TYPE
+
+    # Replace all variables ( prefixed by PHP_ALL )
+    replace_in_file $PHP_INI "PHP_ALL"
+done
 
 /usr/local/bin/entrypoint.sh "$@"
