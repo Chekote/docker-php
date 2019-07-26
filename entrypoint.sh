@@ -29,19 +29,16 @@ replace_in_file() {
     fi
 }
 
+# Set php.ini options
+for TYPE in cli fpm; do
+    PHP_INI=/etc/php/${PHP_MAJOR_VERSION}/${TYPE}/php.ini
+    VAR_TYPE=`echo "PHP_$TYPE" | tr '[:lower:]' '[:upper:]'`
 
-# Set the php.ini file locations.
-PHP_CLI_INI=/etc/php/$PHP_MAJOR_VERSION/cli/php.ini
-PHP_FPM_INI=/etc/php/$PHP_MAJOR_VERSION/fpm/php.ini
+    # Replace all variables ( prefixed by PHP_TYPE ) on the proper PHP type file
+    replace_in_file $PHP_INI $VAR_TYPE
 
-# Replace all CLI variables ( prefixed by CLI )
-replace_in_file $PHP_CLI_INI "PHP_CLI"
-
-# Replace all FPM variables ( prefixed by FPM )
-replace_in_file $PHP_FPM_INI "PHP_FPM"
-
-# Replace variables on both files ( prefixed by ALL ).
-replace_in_file $PHP_CLI_INI "PHP_ALL"
-replace_in_file $PHP_FPM_INI "PHP_ALL"
+    # Replace all variables ( prefixed by PHP_ALL )
+    replace_in_file $PHP_INI "PHP_ALL"
+done
 
 /usr/local/bin/entrypoint.sh "$@"
