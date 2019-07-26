@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 if [ "$PHP_FPM_USER_ID" != "" ]; then
     (>&2 echo "Warning: PHP_FPM_USER_ID is deprecated. Please use WWW_DATA_USER_ID instead.")
