@@ -17,7 +17,8 @@ RUN check_php_version ${MIN_PHP_VERSION} && \
         php${PHP_VERSION}-tokenizer \
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-ctype \
-        php${PHP_VERSION}-json && \
+        php${PHP_VERSION}-json \
+        php${PHP_VERSION}-bcmath && \
     #
     # Cleanup
     apt-get autoremove -y && \
