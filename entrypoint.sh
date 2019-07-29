@@ -10,8 +10,8 @@ if [ "$WWW_DATA_USER_ID" != "" ]; then
     usermod -u $WWW_DATA_USER_ID www-data
 fi
 
-replace_in_file() {
-    PHP_FILE=${1}
+replace_in_files() {
+    PHP_CONFIG_FILES=${1}
     VAR_MATCH=${2}
     REPLACE_VARS=`printenv | awk -F'=' '{print $1}' | grep -E "^$2"`
 
@@ -24,21 +24,22 @@ replace_in_file() {
         VALUE=`printenv "$VAR_NAME"`
 
         # Replace the variable only if it starts with the name of the directive and remove optional ';'
-        sed -i "s!^\(;\)\{0,1\}$DIRECTIVE = [^\n]\+!$DIRECTIVE = $VALUE!g" "$PHP_FILE"
+        find $PHP_CONFIG_FILES -type f -exec \
+            sed -i "s!^\(;\)\{0,1\}$DIRECTIVE = [^\n]\+!$DIRECTIVE = $VALUE!g" {} \;
       done
     fi
 }
 
 # Set php.ini options
 for TYPE in cli fpm; do
-    PHP_INI=/etc/php/${PHP_VERSION}/${TYPE}/php.ini
+    PHP_CONFIG_FILES=/etc/php/$PHP_MAJOR_VERSION/$TYPE/
     VAR_TYPE=`echo "PHP_$TYPE" | tr '[:lower:]' '[:upper:]'`
 
     # Replace all variables ( prefixed by PHP_TYPE ) on the proper PHP type file
-    replace_in_file $PHP_INI $VAR_TYPE
+    replace_in_files $PHP_CONFIG_FILES $VAR_TYPE
 
     # Replace all variables ( prefixed by PHP_ALL )
-    replace_in_file $PHP_INI "PHP_ALL"
+    replace_in_files $PHP_CONFIG_FILES "PHP_ALL"
 done
 
 /usr/local/bin/entrypoint.sh "$@"
