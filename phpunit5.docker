@@ -11,7 +11,7 @@ RUN check_php_version ${MIN_PHP_VERSION} && \
         #
         # PHPUnit requirements.
         # See https://github.com/sebastianbergmann/phpunit/blob/5.0.0/composer.json
-        # See https://phpunit.de/manual/6.0/en/installation.html#installation.requirements
+        # See https://phpunit.de/manual/5.0/en/installation.html#installation.requirements
         php${PHP_VERSION}-dom \
         php${PHP_VERSION}-json \
         #php${PHP_VERSION}-libxml \ (already included)
