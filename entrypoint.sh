@@ -13,7 +13,7 @@ fi
 replace_in_files() {
     PHP_CONFIG_FILES=${1}
     VAR_MATCH=${2}
-    REPLACE_VARS=`printenv | awk -F'=' '{print $1}' | grep -E "^$2"`
+    REPLACE_VARS=`printenv | awk -F'=' '{print $1}' | grep -E "^$VAR_MATCH"`
 
     # If there are variables to be replace move forward
     if [ ! -z "$REPLACE_VARS" ]; then
@@ -25,14 +25,14 @@ replace_in_files() {
 
         # Replace the variable only if it starts with the name of the directive and remove optional ';'
         find $PHP_CONFIG_FILES -type f -exec \
-            sed -i "s/^\(;\)\{0,1\}$DIRECTIVE = [^\n]\+!/$DIRECTIVE = $VALUE/g" {} \;
+            sed -i "s/^\(;\)\{0,1\}$DIRECTIVE = [^\n]\+/$DIRECTIVE = $VALUE/g" {} \;
       done
     fi
 }
 
 # Set php.ini options
 for TYPE in cli fpm; do
-    PHP_CONFIG_FILES=/etc/php/$PHP_MAJOR_VERSION/$TYPE/
+    PHP_CONFIG_FILES=/etc/php/$PHP_VERSION/$TYPE/
     VAR_TYPE=`echo "PHP_$TYPE" | tr '[:lower:]' '[:upper:]'`
 
     # Replace all variables ( prefixed by PHP_TYPE ) on the proper PHP type file
