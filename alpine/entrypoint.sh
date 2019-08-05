@@ -10,7 +10,7 @@ PHP_INI=/etc/php$PHP_MAJOR_VERSION/php.ini
 replace_in_files() {
     PHP_CONFIG_FILES=$1
     VAR_MATCH=$2
-    REPLACE_VARS=`printenv | awk -F'=' '{print $1}' | grep -E "^$2"`
+    REPLACE_VARS=`printenv | awk -F'=' '{print $1}' | grep -E "^$VAR_MATCH"`
 
     # If there are variables to be replace move forward
     if [ ! -z "$REPLACE_VARS" ]; then
