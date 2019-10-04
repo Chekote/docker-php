@@ -12,7 +12,7 @@ RUN check_php_version ${MIN_PHP_VERSION} && \
         # Behat requirements. See https://github.com/Behat/Behat/blob/v3.4.0/composer.json
         php${PHP_VERSION}-mbstring \
         #
-        # JUnit requirements.
+        # JUnitOutputPrinter requirements.
         php${PHP_VERSION}-dom \
         #
         # instaclick/php-webdriver requirements
