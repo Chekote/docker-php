@@ -391,6 +391,10 @@ else
   out.warn "Skipping Laravel 5.2 & 5.3. PHP version is not between 5.6.4 & 7.1.32"
 fi
 
+# requires 5.6.4
+assertVersionAtLeast 5.6.4
+buildImage laravel5.4
+
 # requires 7.0
 assertVersionAtLeast 7.0
 buildImage phpunit6
