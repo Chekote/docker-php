@@ -10,6 +10,8 @@ RUN check_php_version ${REQUIRED_PHP_VERSION} && \
     apt-get install -y --no-install-recommends \
         #
         # Composer requirements. See https://getcomposer.org/doc/00-intro.md#system-requirements
+        curl \
+        php${PHP_VERSION}-curl \
         git \
         php${PHP_VERSION}-zip \
         unzip && \

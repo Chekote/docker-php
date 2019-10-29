@@ -13,10 +13,7 @@ RUN check_php_version ${MIN_PHP_VERSION} && \
         php${PHP_VERSION}-mbstring \
         #
         # JUnitOutputPrinter requirements.
-        php${PHP_VERSION}-dom \
-        #
-        # instaclick/php-webdriver requirements
-        php${PHP_VERSION}-curl && \
+        php${PHP_VERSION}-dom && \
     #
     # Cleanup
     apt-get autoremove -y && \

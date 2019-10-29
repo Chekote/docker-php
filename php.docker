@@ -14,9 +14,8 @@ RUN apt-get update && \
     add-apt-repository ppa:ondrej/php && \
     apt-get update && \
     #
-    # Install PHP & curl (for composer)
+    # Install PHP
     apt-get install -y --no-install-recommends \
-        curl \
         php${PHP_VERSION}-cli \
         php${PHP_VERSION}-fpm && \
     #
