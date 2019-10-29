@@ -409,3 +409,7 @@ assertVersionAtLeast 7.1.3
 buildImage laravel5.6
 buildImage laravel5.7
 buildImage laravel5.8
+
+# requires 7.1.3
+assertVersionAtLeast 7.2.0
+buildImage laravel6.0
