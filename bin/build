@@ -283,7 +283,7 @@ buildImage() {
 
   out.info ""
   out.info "Building $IMAGE image"
-  docker image build -f "$IMAGE.docker" --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$REPO:$MAJOR_TAG" . > "logs/$IMAGE.log" 2>&1
+  docker image build --no-cache -f "$IMAGE.docker" --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$REPO:$MAJOR_TAG" . > "logs/$IMAGE.log" 2>&1
   exitCheck $?
 
   out.success "Successfully built image"
