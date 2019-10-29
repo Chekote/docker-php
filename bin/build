@@ -384,8 +384,7 @@ buildImage laravel5.1
 assertVersionAtLeast 5.6
 buildImage phpunit5
 
-# requires 5.6.4
-if versionBetween 5.6.4 7.1.16; then
+if versionBetween 5.6.4 7.1.32; then
   buildImage laravel5.3
 else
   out.warn "Skipping Laravel 5.3. PHP version is not between 5.6.4 & 7.1.16"
