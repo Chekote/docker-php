@@ -397,6 +397,7 @@ buildImage laravel5.4
 
 # requires 7.0
 assertVersionAtLeast 7.0
+buildImage laravel5.5
 buildImage phpunit6
 
 # requires 7.1
