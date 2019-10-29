@@ -377,11 +377,8 @@ assertVersionAtLeast 5.3.3
 buildImage behat3.4
 
 # requires 5.5.9
-if versionBetween 5.5.9 7.1.16; then
-  buildImage laravel5.1
-else
-  out.warn "Skipping Laravel 5.1. PHP version is not between 5.5.9 & 7.1.16"
-fi
+assertVersionAtLeast 5.5.9
+buildImage laravel5.1
 
 # requires 5.6
 assertVersionAtLeast 5.6
