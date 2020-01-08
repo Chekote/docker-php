@@ -28,16 +28,19 @@ To set the UID for the initial process, you should set a `LOCAL_USER_ID` environ
 
     docker run -e LOCAL_USER_ID=1000 chekote/php:5.6.30-a php -v
 
-## www-data UID (PHP-FPM runs as this user)
+## PHP-FPM user
 
-To set the UID for the www-data user (and by extension, the PHP-FPM process), you should set the `WWW_DATA_USER_ID` environmental variable on the container. e.g:
+To set the user that the PHP-FPM process runs as, you can set the php.ini directives "user" and "listen.owner" using the "php.ini directives" feature outlined in the section below. e.g:
 
-    docker run -e WWW_DATA_USER_ID=1000 chekote/php:5.6.30-a php-fpm5.6
+    docker run -e PHP_FPM_USER=1000 -e PHP_FPM_LISTEN__OWNER=1000 chekote/php:5.6.30-a php-fpm5.6
 
 # php.ini directives
 
-You can modify any php.ini directives by setting environmental variables within the container. It can be accomplish by prefixing the variable with the place to be replace ( FPM, CLI or ALL for both ).
-If the variable contains a dot `.` in it you can accomplish this by using a double underscore `__` on the variable name. The following are some examples of how to accomplish this:
+You can modify any php.ini directives by setting environmental variables within the container. This can be accomplished by prefixing the variable with the particular environment to be affected (FPM, CLI or ALL for both).
+
+Note: If you want to set a directive that has a period in the name, you should substitude the period for a double underscore in your environmental variable name. e.g. to set the PHP FPM listen.owner directive, you would use an environmental variable named PHP_FPM_LISTEN__OWNER.
+
+A few examples:
 
 | environmental variable         | php.ini directives                                                                                        | php.ini config file |
 |--------------------------------|-----------------------------------------------------------------------------------------------------------|---------------------|
