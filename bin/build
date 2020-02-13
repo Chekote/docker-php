@@ -289,7 +289,10 @@ buildImage() {
   out.success "Successfully built image"
 
   if [ "$IMAGE" = "php" ]; then
-    PATCH_VERSION=`docker run --rm "$REPO:$MAJOR_VERSION" php -r "echo explode('.', substr(PHP_VERSION, 0, strpos(PHP_VERSION, '-')))[2];"`
+    PATCH_VERSION=`docker run --rm "$REPO:$MAJOR_VERSION" php -r '
+        $version = ($dashPos = strpos(PHP_VERSION, "-")) === false ? PHP_VERSION : substr(PHP_VERSION, 0, $dashPos);
+        echo explode(".", $version)[2];
+    '`
     log.info "PHP Patch Version: $PATCH_VERSION"
   fi
 
