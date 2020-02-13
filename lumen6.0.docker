@@ -1,0 +1,22 @@
+# chekote/php-lumen-${SUPPORTED_LUMEN_VERSION}:${PHP_VERSION}-${REVISION}
+ARG PHP_VERSION=7.3
+FROM chekote/php:${PHP_VERSION}-composer
+
+ENV SUPPORTED_LUMEN_VERSION '6.0'
+ENV MIN_PHP_VERSION '7.2.0'
+
+RUN check_php_version ${MIN_PHP_VERSION} && \
+    #
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        #
+        # Laravel requirements. See https://lumen.laravel.com/docs/${SUPPORTED_LUMEN_VERSION}#installation
+        # php${PHP_VERSION}-openssl \ (already included)
+        php${PHP_VERSION}-pdo \
+        php${PHP_VERSION}-mbstring && \
+    #
+    # Cleanup
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/*

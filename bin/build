@@ -414,6 +414,7 @@ buildImage laravel5.7
 buildImage laravel5.8
 buildImage lumen5.6
 
-# requires 7.1.3
+# requires 7.2.0
 assertVersionAtLeast 7.2.0
 buildImage laravel6.0
+buildImage lumen6.0
