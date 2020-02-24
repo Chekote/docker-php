@@ -26,7 +26,7 @@ RUN apt-get update && \
     rm -rf /var/cache/apt/* && \
     #
     # Fix "Unable to create the PID file (/run/php/php5.6-fpm.pid).: No such file or directory (2)"
-    mkdir /run/php && \
+    mkdir -p /run/php && \
     #
     # Configure PHP-FPM
     sed -i "s!display_startup_errors = Off!display_startup_errors = On!g" /etc/php/${PHP_VERSION}/fpm/php.ini && \
