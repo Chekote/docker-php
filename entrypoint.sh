@@ -16,7 +16,7 @@ replace_in_files() {
         # Replace the variable only if it starts with the name of the directive and remove optional ';'
         # Some directives will not have spaces after the directive name. i.e opcache
         find $PHP_CONFIG_FILES -type f -exec \
-            sed -i "s/^;\?$DIRECTIVE \?=.*\+/$DIRECTIVE=$VALUE/g" {} \;
+            sed -i "s/^;\?$DIRECTIVE \?=[^\n]*/$DIRECTIVE=$VALUE/g" {} \;
       done
     fi
 }
