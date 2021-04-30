@@ -422,3 +422,7 @@ buildImage lumen6.0
 #requires 7.2.5
 assertVersionAtLeast 7.2.5
 buildImage laravel7.x
+
+#requires 7.3
+assertVersionAtLeast 7.3
+buildImage laravel8.x
