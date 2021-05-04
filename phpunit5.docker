@@ -13,7 +13,6 @@ RUN check_php_version ${MIN_PHP_VERSION} && \
         # See https://github.com/sebastianbergmann/phpunit/blob/5.0.0/composer.json
         # See https://phpunit.de/manual/5.0/en/installation.html#installation.requirements
         php${PHP_VERSION}-dom \
-        php${PHP_VERSION}-json \
         #php${PHP_VERSION}-libxml \ (already included)
         php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-xml \
@@ -22,6 +21,11 @@ RUN check_php_version ${MIN_PHP_VERSION} && \
         php${PHP_VERSION}-tokenizer \
         php${PHP_VERSION}-xdebug \
         php${PHP_VERSION}-xmlwriter && \
+    #
+    # php-json is not available for PHP 8, so only install it if we're working with lower than 8
+    if php -r "exit((int) version_compare('8.0', phpversion(), '<'));"; then \
+      apt-get install -y --no-install-recommends php${PHP_VERSION}-json; \
+    fi && \
     #
     # Cleanup
     apt-get autoremove -y && \

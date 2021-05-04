@@ -17,8 +17,12 @@ RUN check_php_version ${MIN_PHP_VERSION} && \
         php${PHP_VERSION}-tokenizer \
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-ctype \
-        php${PHP_VERSION}-json \
         php${PHP_VERSION}-bcmath && \
+    #
+    # php-json is not available for PHP 8, so only install it if we're working with lower than 8
+    if php -r "exit((int) version_compare('8.0', phpversion(), '<'));"; then \
+      apt-get install -y --no-install-recommends php${PHP_VERSION}-json; \
+    fi && \
     #
     # Cleanup
     apt-get autoremove -y && \
