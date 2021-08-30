@@ -13,8 +13,12 @@ RUN check_php_version ${MIN_PHP_VERSION} && \
         # See https://github.com/sebastianbergmann/phpunit/blob/5.0.0/composer.json
         # See https://phpunit.de/manual/5.0/en/installation.html#installation.requirements
         php${PHP_VERSION}-dom \
+        #php${PHP_VERSION}-json \ (already included)
         #php${PHP_VERSION}-libxml \ (already included)
         php${PHP_VERSION}-mbstring \
+        #php${PHP_VERSION}-pcre \ (already included)
+        #php${PHP_VERSION}-reflection \ (already included)
+        #php${PHP_VERSION}-spl \ (already included)
         php${PHP_VERSION}-xml \
         #
         # Code coverage requirements
