@@ -416,7 +416,7 @@ buildImage lumen5.6
 
 # requires 7.2.0
 assertVersionAtLeast 7.2.0
-buildImage laravel6.0
+buildImage laravel6.x
 buildImage lumen6.0
 buildImage phpunit8
 
