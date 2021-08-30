@@ -1,0 +1,39 @@
+# chekote/php:${PHP_VERSION}-phpunit9
+ARG PHP_VERSION=7.3
+FROM chekote/php:${PHP_VERSION}-composer
+
+ENV MIN_PHP_VERSION '7.3'
+
+RUN check_php_version ${MIN_PHP_VERSION} && \
+    #
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        #
+        # PHPUnit requirements.
+        # See https://github.com/sebastianbergmann/phpunit/blob/9.0.0/composer.json
+        # See https://phpunit.readthedocs.io/en/9.5/installation.html#requirements
+        php${PHP_VERSION}-dom \
+        #php${PHP_VERSION}-json \ (already included)
+        #php${PHP_VERSION}-libxml \ (already included)
+        php${PHP_VERSION}-mbstring \
+        #php${PHP_VERSION}-pcre \ (already included)
+        #php${PHP_VERSION}-reflection \ (already included)
+        #php${PHP_VERSION}-spl \ (already included)
+        php${PHP_VERSION}-xml \
+        php${PHP_VERSION}-xmlwriter \
+        #
+        # Code coverage requirements
+        php${PHP_VERSION}-tokenizer \
+        php${PHP_VERSION}-xdebug \
+        php${PHP_VERSION}-xmlwriter && \
+    #
+    # php-json is not available for PHP 8, so only install it if we're working with lower than 8
+    if php -r "exit((int) version_compare('8.0', phpversion(), '<'));"; then \
+      apt-get install -y --no-install-recommends php${PHP_VERSION}-json; \
+    fi && \
+    #
+    # Cleanup
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/*
