@@ -1,5 +1,5 @@
 # chekote/php:${PHP_VERSION}-alpine
-FROM chekote/alpine:3.13.6
+FROM chekote/alpine:3.14.2
 
 ENV PHP_MAJOR_VERSION 5
 
