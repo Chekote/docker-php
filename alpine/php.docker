@@ -18,6 +18,9 @@ RUN set -euo pipefail; \
         php${PHP_MAJOR_VERSION}-fpm \
         php${PHP_MAJOR_VERSION}-opcache; \
     #
+    # Ensure PHP is executable via php command
+    if [[ ! -f /usr/bin/php ]]; then ln -s /usr/bin/php${PHP_MAJOR_VERSION} /usr/bin/php; fi; \
+    #
     # Configure PHP
     PHP_INI=/etc/php${PHP_MAJOR_VERSION}/php.ini; \
     sed -i "s!display_startup_errors =[^\n]*!display_startup_errors = On!g" ${PHP_INI}; \
