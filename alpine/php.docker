@@ -5,13 +5,12 @@ ARG PHP_MAJOR_VERSION
 
 RUN set -euo pipefail; \
     apk add \
-    #
-    # usermod
+        #
+        # usermod
         shadow \
-    # Install PHP & curl (for composer)
+        # Install PHP
         curl \
         php${PHP_MAJOR_VERSION} \
-        php${PHP_MAJOR_VERSION}-curl \
         php${PHP_MAJOR_VERSION}-fpm \
         php${PHP_MAJOR_VERSION}-opcache; \
     #
