@@ -3,7 +3,7 @@ FROM chekote/alpine:3.14.2
 
 ARG PHP_MAJOR_VERSION
 
-RUN set -eo pipefail; \
+RUN set -euo pipefail; \
     apk add \
     #
     # usermod
@@ -28,7 +28,7 @@ RUN set -eo pipefail; \
     PHP_WWW_FPM_CONF=/etc/php${PHP_MAJOR_VERSION}/php-fpm.d/www.conf; \
     sed -i "s!listen =[^\n]*!listen = 0.0.0.0:9000!g" ${PHP_WWW_FPM_CONF}; \
     sed -i "s!;catch_workers_output =[^\n]*!catch_workers_output = yes!g" ${PHP_WWW_FPM_CONF}; \
-    sed -i "s![error_log] =[^\n]*/$pool.error.log![error_log] = /proc/self/fd/2!g" ${PHP_WWW_FPM_CONF}
+    sed -i "s!\[error_log\] =[^\n]*/\$pool.error.log![error_log] = /proc/self/fd/2!g" ${PHP_WWW_FPM_CONF}
 
 VOLUME ["/workdir"]
 WORKDIR /workdir
