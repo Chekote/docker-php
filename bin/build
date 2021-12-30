@@ -281,12 +281,10 @@ buildImage() {
   local MAJOR_TAG="$MAJOR_VERSION$TAG_SUFFIX"
   local MINOR_TAG="$MAJOR_VERSION.$MINOR_VERSION$TAG_SUFFIX"
 
-  out.info ""
-  out.info "Building $IMAGE image"
-  docker image build --no-cache -f "$IMAGE.docker" --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$REPO:$MAJOR_TAG" . > "logs/$IMAGE.log" 2>&1
-  exitCheck $?
+  buildMultiArchImage "$IMAGE" "$REPO:$MAJOR_TAG"
 
-  out.success "Successfully built image"
+  log.info "Pulling multi-arch image '$REPO:$MAJOR_TAG' since buildx does not support loading currently..."
+  docker image pull "$REPO:$MAJOR_TAG"
 
   if [ "$IMAGE" = "php" ]; then
     PATCH_VERSION=`docker run --rm "$REPO:$MAJOR_VERSION" php -r '
@@ -302,49 +300,31 @@ buildImage() {
   PATCH_TAG=$(patchTag "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION" "$TAG_SUFFIX" "$SHA")
   log.info "Patch Tag: $PATCH_TAG"
 
-  out.info ""
-  out.info "Tagging image"
-  tagImage "$REPO:$MAJOR_TAG" "$REPO:$MINOR_TAG"
-  tagImage "$REPO:$MAJOR_TAG" "$REPO:$PATCH_TAG"
-  out.success "Successfully created image tags"
-
-  out.info ""
-  out.info "Pushing $IMAGE images"
-  pushIfShaDiff "$MAJOR_TAG" "$SHA"
-  pushIfShaDiff "$MINOR_TAG" "$SHA"
-  pushIfShaDiff "$PATCH_TAG" "$SHA"
-  out.success "Successfully pushed images"
+  buildMultiArchImage "$IMAGE" "$REPO:$MINOR_TAG"
+  buildMultiArchImage "$IMAGE" "$REPO:$PATCH_TAG"
 }
 
 #######################################
-# Arguments:
-#   1     the tag to push
-#   2     the sha of the image currently being built
-# Globals:
-#   IMAGE         the name of the image currently being build
-#   REPO          the name of Docker Hub repo where the images are hosted
-#######################################
-pushIfShaDiff() {
-  local TAG=$1;
-  local SHA=$2;
-
-  if [ "$SHA" == $(tagSHA "$TAG") ]; then
-    echo "Skipping push for tag $TAG. Published tag already matches SHA"
-  else
-    pushImage "$REPO:$TAG"
-  fi
-}
-
-#######################################
-# Pushes the specified image
+# Builds and pushes a multi-arch image
+#
+# Ideally this should just build and not push, but buildx does not currently support loading.
 #
 # Arguments:
-#  1 the image to push
+#   1 the image to build. Must have a matching .docker file in the root of the project.
+#   2 the tag to use for the image
+# Globals:
+#   MAJOR_VERSION the major PHP version to build images for
+#   MINOR_VERSION the minor PHP version to build images for
 #######################################
-pushImage() {
-  docker image push $1
-  exitCheck $?
-  out.success "Successfully pushed image $1"
+buildMultiArchImage() {
+    local IMAGE="$1"
+    local TAG="$2"
+
+    out.info ""
+    out.info "Building $1 multi-arch image with tag '$2'"
+    docker buildx build --push --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -f "$1.docker" \
+        --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$TAG" . > "logs/$1.log" 2>&1
+    out.success "Successfully built & pushed multi-arch image with tag '$TAG'"
 }
 
 #######################################
