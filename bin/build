@@ -408,3 +408,7 @@ buildImage laravel7.x
 assertVersionAtLeast 7.3
 buildImage laravel8.x
 buildImage phpunit9
+
+#requires 8.0
+assertVersionAtLeast 8.0
+buildImage laravel9.x
