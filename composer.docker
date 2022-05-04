@@ -14,6 +14,7 @@ RUN check_php_version ${REQUIRED_PHP_VERSION} && \
         git \
         php${PHP_VERSION}-curl \
         php${PHP_VERSION}-zip \
+        ssh \
         unzip && \
     #
     # Cleanup
