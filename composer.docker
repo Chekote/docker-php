@@ -4,9 +4,11 @@ FROM chekote/php:${PHP_VERSION}
 
 ENV REQUIRED_PHP_VERSION '5.3.2'
 
-RUN check_php_version ${REQUIRED_PHP_VERSION} && \
+RUN set -eu; \
     #
-    apt-get update && \
+    check_php_version ${REQUIRED_PHP_VERSION}; \
+    #
+    apt-get update; \
     apt-get install -y --no-install-recommends \
         #
         # Composer requirements. See https://getcomposer.org/doc/00-intro.md#system-requirements
@@ -15,10 +17,10 @@ RUN check_php_version ${REQUIRED_PHP_VERSION} && \
         php${PHP_VERSION}-curl \
         php${PHP_VERSION}-zip \
         ssh \
-        unzip && \
+        unzip; \
     #
     # Cleanup
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
+    apt-get autoremove -y; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*; \
     rm -rf /var/cache/apt/*
