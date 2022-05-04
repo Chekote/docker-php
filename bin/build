@@ -150,7 +150,7 @@ patchTag() {
   local TAG=$1
   local SUFFIX=$2
   local SHA=$3
-  local LATEST_TAG
+  local LATEST_TAG=''
 
   log.info "Checking if $TAG$SUFFIX exists"
   if ! tagExists "$TAG$SUFFIX"; then
