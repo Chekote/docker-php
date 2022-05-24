@@ -31,4 +31,4 @@ RUN set -eu; \
     php -v; \
     php-fpm${PHP_VERSION} -v; \
     ssh -V; \
-    unzip -v
+    unzip -v \
