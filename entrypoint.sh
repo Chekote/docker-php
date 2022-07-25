@@ -6,7 +6,7 @@ replace_in_files() {
     REPLACE_VARS=$(printenv | awk -F'=' '{print $1}' | grep -E "^$VAR_MATCH")
 
     # If there are variables to be replace move forward
-    if [ ! -z "$REPLACE_VARS" ]; then
+    if [ -n "$REPLACE_VARS" ]; then
       for VAR_NAME in $REPLACE_VARS; do
         # get the directive name by removing the prefixes e.g. PHP_CLI and making them lowercase.
         # if there are any double '_' replace with a dot.
