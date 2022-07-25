@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 replace_in_files() {
-    PHP_CONFIG_FILES=${1}
-    VAR_MATCH=${2}
+    PHP_CONFIG_FILES=$1
+    VAR_MATCH=$2
     REPLACE_VARS=$(printenv | awk -F'=' '{print $1}' | grep -E "^$VAR_MATCH")
 
     # If there are variables to be replace move forward
