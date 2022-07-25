@@ -10,13 +10,13 @@ replace_in_files() {
       for VAR_NAME in $REPLACE_VARS; do
         # get the directive name by removing the prefixes e.g. PHP_CLI and making them lowercase.
         # if there are any double '_' replace with a dot.
-        DIRECTIVE=`echo "$VAR_NAME" | cut -c9- | tr '[:upper:]' '[:lower:]' | sed 's|__|.|g'`
+        DIRECTIVE=`echo "$VAR_NAME" | cut -c9- | tr '[:upper:]' '[:lower:]' | sed 's!__!.!g'`
         VALUE=`printenv "$VAR_NAME"`
 
         # Replace the variable only if it starts with the name of the directive and remove optional ';'
         # Some directives will not have spaces after the directive name. i.e opcache
         find $PHP_CONFIG_FILES -follow -type f -exec \
-            sed -i "s|^;\?$DIRECTIVE \?=[^\n]*|$DIRECTIVE=$VALUE|g" {} \;
+            sed -i "s!^;\?$DIRECTIVE \?=[^\n]*!$DIRECTIVE=$VALUE!g" {} \;
       done
     fi
 }
