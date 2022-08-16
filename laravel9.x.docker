@@ -1,6 +1,6 @@
 # chekote/php:${PHP_VERSION}-laravel${SUPPORTED_LARAVEL_VERSION}
 ARG PHP_VERSION=8.0
-FROM chekote/php:${PHP_VERSION}-composer
+FROM chekote/php:${PHP_VERSION}-laravel8.x
 
 ENV SUPPORTED_LARAVEL_VERSION '9.x'
 ENV MIN_PHP_VERSION '8.0'
@@ -12,19 +12,10 @@ RUN set -eu; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         #
-        # Laravel requirements. See https://laravel.com/docs/9.x/deployment
-        php${PHP_VERSION}-bcmath \
-        php${PHP_VERSION}-ctype \
+        # Laravel requirements (beyond base image).
+        # Laravel requirements. See https://laravel.com/docs/${SUPPORTED_LARAVEL_VERSION}/deployment
         php${PHP_VERSION}-curl \
-        php${PHP_VERSION}-dom \
-        php${PHP_VERSION}-fileinfo \
-        # php${PHP_VERSION}-json \ (already included)
-        php${PHP_VERSION}-mbstring \
-        # php${PHP_VERSION}-openssl \ (already included)
-        # php${PHP_VERSION}-pcre \ (already included)
-        php${PHP_VERSION}-pdo \
-        php${PHP_VERSION}-tokenizer \
-        php${PHP_VERSION}-xml; \
+        php${PHP_VERSION}-dom; \
     #
     # Cleanup
     apt-get autoremove -y; \
