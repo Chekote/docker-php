@@ -360,6 +360,7 @@ buildImage composer
 # requires 5.3.3
 assertVersionAtLeast 5.3.3
 buildImage behat3.4
+buildImage behat3.4-sqlite
 
 # requires 5.5.9
 assertVersionAtLeast 5.5.9
