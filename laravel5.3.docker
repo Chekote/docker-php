@@ -14,9 +14,9 @@ RUN set -eu; \
     apt-get install -y --no-install-recommends \
         #
         # Laravel requirements. See https://laravel.com/docs/${SUPPORTED_LARAVEL_VERSION}/installation#server-requirements
+        php${PHP_VERSION}-mbstring \
         # php${PHP_VERSION}-openssl \ (already included)
         php${PHP_VERSION}-pdo \
-        php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-tokenizer \
         php${PHP_VERSION}-xml; \
     #
