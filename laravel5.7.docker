@@ -5,6 +5,9 @@ FROM chekote/php:${PHP_VERSION}-laravel5.6
 ENV SUPPORTED_LARAVEL_VERSION '5.7'
 ENV MIN_PHP_VERSION '7.1.3'
 
+# No additional package requirements beyond base image.
+# See https://laravel.com/docs/${SUPPORTED_LARAVEL_VERSION}/installation#server-requirements
+
 RUN set -eu; \
     #
     check_php_version ${MIN_PHP_VERSION}; \
