@@ -12,12 +12,8 @@ RUN set -eu; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         #
-        # Laravel requirements. See https://laravel.com/docs/${SUPPORTED_LARAVEL_VERSION}/installation#server-requirements
-        # php${PHP_VERSION}-openssl \ (already included in php base image)
-        # php${PHP_VERSION}-pdo \ (already included in Laravel 5.4 base image)
-        # php${PHP_VERSION}-mbstring \ (already included in Laravel 5.4 base image)
-        # php${PHP_VERSION}-tokenizer \ (already included in Laravel 5.4 base image)
-        # php${PHP_VERSION}-xml \ (already included in Laravel 5.4 base image)
+        # Laravel requirements (beyond base image).
+        # See https://laravel.com/docs/${SUPPORTED_LARAVEL_VERSION}/installation#server-requirements
         php${PHP_VERSION}-ctype; \
     #
     # php-json is not available for PHP 8, so only install it if we're working with lower than 8
