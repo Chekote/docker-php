@@ -4,7 +4,7 @@
 # chekote/php-alpine:${PHP_MAJOR_VERSION}-${PHP_MINOR_VERSION}-${PHP_PATCH_VERSION}-$(date +"%Y-%m-%d-%H-%M-%S")
 FROM chekote/alpine:3.14.2
 
-ARG PHP_MAJOR_VERSION
+ARG PHP_MAJOR_VERSION=8
 ENV PHP_MAJOR_VERSION $PHP_MAJOR_VERSION
 
 RUN set -euo pipefail; \
