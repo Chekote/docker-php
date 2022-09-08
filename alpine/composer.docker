@@ -2,7 +2,7 @@
 # chekote/php-alpine-composer:${PHP_MAJOR_VERSION}-$PHP_MINOR_VERSION
 # chekote/php-alpine-composer:${PHP_MAJOR_VERSION}-${PHP_MINOR_VERSION}-$PHP_PATCH_VERSION
 # chekote/php-alpine-composer:${PHP_MAJOR_VERSION}-${PHP_MINOR_VERSION}-${PHP_PATCH_VERSION}-$(date +"%Y-%m-%d-%H-%M-%S")
-ARG PHP_MAJOR_VERSION
+ARG PHP_MAJOR_VERSION=8
 FROM chekote/php-alpine:$PHP_MAJOR_VERSION
 
 RUN set -euo pipefail; \
