@@ -419,3 +419,4 @@ buildImage laravel9.x
 #requires 8.1
 assertVersionAtLeast 8.1
 buildImage laravel10.x
+buildImage phpunit10
