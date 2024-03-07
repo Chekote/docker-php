@@ -362,18 +362,6 @@ assertVersionAtLeast 5.3.3
 buildImage behat3.4
 buildImage behat3.4-sqlite
 
-# requires 5.6
-assertVersionAtLeast 5.6
-buildImage phpunit5
-
-# requires 7.0
-assertVersionAtLeast 7.0
-buildImage phpunit6
-
-# requires 7.1
-assertVersionAtLeast 7.1
-buildImage phpunit7
-
 # requires 7.2.0
 assertVersionAtLeast 7.2.0
 buildImage phpunit8
