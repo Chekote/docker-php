@@ -45,8 +45,8 @@ dockerAuth() {
 #   2 the tag suffix, e.g. -phpunit6
 #######################################
 latestTag() {
-  local TAG=$1
-  local SUFFIX=$2
+  local TAG="$1"
+  local SUFFIX="$2"
   local LATEST_TAG
 
   log.info "Checking if $TAG$SUFFIX exists"
@@ -91,8 +91,8 @@ latestTag() {
 #   0 if a next available tag was found. 1 if no tags are available.
 #######################################
 nextAvailableTag() {
-  local TAG=$1
-  local SUFFIX=$2
+  local TAG="$1"
+  local SUFFIX="$2"
   local NEXT_TAG
 
   if ! tagExists "$TAG$SUFFIX"; then
@@ -134,7 +134,7 @@ tagExists() {
 tagSHA() {
   log.info "Getting SHA for tag $1"
   curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-      https://index.docker.io/v2/chekote/php/manifests/$1 | jq -r .config.digest | cut -d':' -f 2
+      "https://index.docker.io/v2/chekote/php/manifests/$1" | jq -r .config.digest | cut -d':' -f 2
 }
 
 #######################################
@@ -148,9 +148,9 @@ tagSHA() {
 #   0 if a patch tag could be determined. 1 if no tags are available.
 #######################################
 patchTag() {
-  local TAG=$1
-  local SUFFIX=$2
-  local SHA=$3
+  local TAG="$1"
+  local SUFFIX="$2"
+  local SHA="$3"
   local LATEST_TAG=''
 
   log.info "Checking if $TAG$SUFFIX exists"
@@ -185,9 +185,9 @@ patchTag() {
 #  1 the exit code to check
 #######################################
 exitCheck() {
-  if [ $1 != 0 ]; then
+  if [ "$1" != 0 ]; then
     log.error "Got exit code $1, quitting."
-    exit $1
+    exit "$1"
   fi
 }
 
@@ -239,7 +239,7 @@ versionGreaterThan() {
 #  0 if the 1st version is less than the 2nd. 1 if not.
 #######################################
 versionLessThan() {
-  docker container run --rm ${REPO}:7 php -r "version_compare('$1', '$2', '<') ? exit(0) : exit(1);";
+  docker container run --rm "$REPO:7" php -r "version_compare('$1', '$2', '<') ? exit(0) : exit(1);";
   return $?
 }
 
@@ -270,7 +270,7 @@ assertVersionAtLeast() {
 #   PATCH_VERSION the patch PHP version that was built
 #######################################
 buildImage() {
-  IMAGE=$1
+  IMAGE="$1"
   local TAG_SUFFIX
   local PATCH_TAG
   local SHA
@@ -338,7 +338,7 @@ buildMultiArchImage() {
 #  2 the tag to use
 #######################################
 tagImage() {
-  docker image tag $1 $2
+  docker image tag "$1" "$2"
   exitCheck $?
   out.success "Successfully tagged $2"
 }
