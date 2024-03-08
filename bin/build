@@ -188,7 +188,7 @@ patchTag() {
 #  0 if the version being build is between the two specified versions. 1 if not.
 #######################################
 versionBetween() {
-  FULL_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+  local FULL_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
   if versionLessThan "$FULL_VERSION" "$1"; then
     return 1;
   fi
@@ -237,7 +237,7 @@ versionLessThan() {
 #  1 the version to assert
 #######################################
 assertVersionAtLeast() {
-  FULL_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+  local FULL_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
   if versionLessThan "$FULL_VERSION" "$1"; then
     out.warn "No further images supported for PHP version $FULL_VERSION. Quitting..."
     exit 0
