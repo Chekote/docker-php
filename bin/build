@@ -262,11 +262,7 @@ buildImage() {
   local PATCH_TAG
   local SHA
 
-  if [ "$IMAGE" = "php" ]; then
-    TAG_SUFFIX=""
-  else
-    TAG_SUFFIX="-$IMAGE"
-  fi
+  TAG_SUFFIX=$([[ "$IMAGE" == "php" ]] && echo "" || echo "-$IMAGE")
 
   local MAJOR_TAG="$MAJOR_VERSION$TAG_SUFFIX"
   local MINOR_TAG="$MAJOR_VERSION.$MINOR_VERSION$TAG_SUFFIX"
