@@ -179,19 +179,6 @@ patchTag() {
 }
 
 #######################################
-# Checks the exit code passed and exits with it if it is not zero
-#
-# Arguments:
-#  1 the exit code to check
-#######################################
-exitCheck() {
-  if [ "$1" != 0 ]; then
-    log.error "Got exit code $1, quitting."
-    exit "$1"
-  fi
-}
-
-#######################################
 # Checks that the PHP version being built is between the two specified versions (inclusive)
 #
 # Arguments:
@@ -339,7 +326,6 @@ buildMultiArchImage() {
 #######################################
 tagImage() {
   docker image tag "$1" "$2"
-  exitCheck $?
   out.success "Successfully tagged $2"
 }
 
