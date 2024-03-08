@@ -342,6 +342,44 @@ tagImage() {
   out.success "Successfully tagged $2"
 }
 
+#######################################
+# Builds all images
+#######################################
+buildAll() {
+  buildImage php
+
+  # requires 5.3.2
+  assertVersionAtLeast 5.3.2
+  buildImage composer
+
+  # requires 5.3.3
+  assertVersionAtLeast 5.3.3
+  buildImage behat3.4
+  buildImage behat3.4-sqlite
+
+  # requires 7.2.0
+  assertVersionAtLeast 7.2.0
+  buildImage phpunit8
+
+  #requires 7.2.5
+  assertVersionAtLeast 7.2.5
+  buildImage laravel7.x
+
+  #requires 7.3
+  assertVersionAtLeast 7.3
+  buildImage laravel8.x
+  buildImage phpunit9
+
+  #requires 8.0
+  assertVersionAtLeast 8.0
+  buildImage laravel9.x
+
+  #requires 8.1
+  assertVersionAtLeast 8.1
+  buildImage laravel10.x
+  buildImage phpunit10
+}
+
 dockerAuth
 
 out.info "Please enter the major PHP version (e.g. 5, 7), followed by [ENTER]:"
@@ -351,35 +389,4 @@ out.info ""
 out.info "Please enter the minor PHP version (e.g. 1, 2, 3), followed by [ENTER]:"
 read MINOR_VERSION
 
-buildImage php
-
-# requires 5.3.2
-assertVersionAtLeast 5.3.2
-buildImage composer
-
-# requires 5.3.3
-assertVersionAtLeast 5.3.3
-buildImage behat3.4
-buildImage behat3.4-sqlite
-
-# requires 7.2.0
-assertVersionAtLeast 7.2.0
-buildImage phpunit8
-
-#requires 7.2.5
-assertVersionAtLeast 7.2.5
-buildImage laravel7.x
-
-#requires 7.3
-assertVersionAtLeast 7.3
-buildImage laravel8.x
-buildImage phpunit9
-
-#requires 8.0
-assertVersionAtLeast 8.0
-buildImage laravel9.x
-
-#requires 8.1
-assertVersionAtLeast 8.1
-buildImage laravel10.x
-buildImage phpunit10
+buildAll
