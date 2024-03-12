@@ -8,7 +8,7 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 . "$ROOT"/bin/lib/log.sh
 . "$ROOT"/bin/lib/out.sh
 
-REPO=chekote/php
+OWNER=chekote
 
 PATCH_VERSION=
 
@@ -41,12 +41,12 @@ versionBetween() {
 #  1 the 1st version to compare
 #  2 the 2nd version to compare
 # Globals:
-#  REPO  the name of Docker Hub repo where the images are hosted
+#  OWNER the name of Docker Hub user where the images are hosted
 # Return:
 #  0 if the 1st version is greater than the 2nd. 1 if not.
 #######################################
 versionGreaterThan() {
-  docker container run --rm "$REPO:7" php -r "version_compare('$1', '$2', '>') ? exit(0) : exit(1);";
+  docker container run --rm "$OWNER/php:7" php -r "version_compare('$1', '$2', '>') ? exit(0) : exit(1);";
   return $?
 }
 
@@ -60,7 +60,7 @@ versionGreaterThan() {
 #  0 if the 1st version is less than the 2nd. 1 if not.
 #######################################
 versionLessThan() {
-  docker container run --rm "$REPO:7" php -r "version_compare('$1', '$2', '<') ? exit(0) : exit(1);";
+  docker container run --rm "$OWNER/php:7" php -r "version_compare('$1', '$2', '<') ? exit(0) : exit(1);";
   return $?
 }
 
@@ -85,29 +85,32 @@ assertVersionAtLeast() {
 #  1 the image to build. Must have a matching .docker file in the root of the project.
 # Globals:
 #   IMAGE         the name of the image currently being build
-#   REPO          the name of Docker Hub repo where the images are hosted
 #   MAJOR_VERSION the major PHP version to build images for
 #   MINOR_VERSION the minor PHP version to build images for
 #   PATCH_VERSION the patch PHP version that was built
 #######################################
 buildImage() {
   IMAGE="$1"
-  local MAJOR_TAG MINOR_TAG PATCH_TAG LATEST_TAG
+  local MAJOR_TAG MINOR_TAG PATCH_TAG LATEST_TAG repo
 
-  MAJOR_TAG="$MAJOR_VERSION"
-  MINOR_TAG="$MAJOR_VERSION.$MINOR_VERSION"
+  TAG_SUFFIX=$([[ "$IMAGE" == "php" ]] && echo "" || echo "php")
 
-  buildMultiArchImage "$IMAGE" "$REPO:$MAJOR_TAG"
+  MAJOR_TAG="$TAG_SUFFIX$MAJOR_VERSION"
+  MINOR_TAG="$MAJOR_TAG.$MINOR_VERSION"
+
+  repo="$OWNER/$IMAGE"
+
+  buildMultiArchImage "$IMAGE" "$repo:$MAJOR_TAG"
   if [ "$IMAGE" = "php" ]; then
-    updatePatchVersion
+    updatePatchVersion "$IMAGE"
   fi
 
-  PATCH_TAG="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
-  LATEST_TAG="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION-$(date '+%Y-%m-%d-%H-%M-%S')"
+  PATCH_TAG="$MINOR_TAG.$PATCH_VERSION"
+  LATEST_TAG="$PATCH_TAG-$(date '+%Y-%m-%d-%H-%M-%S')"
 
-  buildMultiArchImage "$IMAGE" "$REPO:$MINOR_TAG"
-  buildMultiArchImage "$IMAGE" "$REPO:$PATCH_TAG"
-  buildMultiArchImage "$IMAGE" "$REPO:$LATEST_TAG"
+  buildMultiArchImage "$IMAGE" "$repo:$MINOR_TAG"
+  buildMultiArchImage "$IMAGE" "$repo:$PATCH_TAG"
+  buildMultiArchImage "$IMAGE" "$repo:$LATEST_TAG"
 }
 
 #######################################
@@ -152,14 +155,20 @@ tagImage() {
 #######################################
 # Extracts the patch version from PHP major version image
 #
+# Arguments
+#  1 the image to get the patch version from
+#
 # Globals:
 #   PATCH_VERSION the patch PHP version. e.g. 27 for 7.2.27
 #######################################
 updatePatchVersion() {
-   PATCH_VERSION=$(docker run --rm "$REPO:$MAJOR_VERSION" php -r '
+   local IMAGE="$1"
+
+   PATCH_VERSION=$(docker run --rm "$OWNER/$IMAGE:$MAJOR_VERSION" php -r '
        $version = ($dashPos = strpos(PHP_VERSION, "-")) === false ? PHP_VERSION : substr(PHP_VERSION, 0, $dashPos);
        echo explode(".", $version)[2];
    ')
+
    log.info "PHP Patch Version: $PATCH_VERSION"
 }
 
