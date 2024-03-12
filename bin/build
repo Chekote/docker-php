@@ -269,9 +269,6 @@ buildImage() {
 
   buildMultiArchImage "$IMAGE" "$REPO:$MAJOR_TAG"
 
-  log.info "Pulling multi-arch image '$REPO:$MAJOR_TAG' since buildx does not support loading currently..."
-  docker image pull "$REPO:$MAJOR_TAG"
-
   if [ "$IMAGE" = "php" ]; then
     PATCH_VERSION=$(docker run --rm "$REPO:$MAJOR_VERSION" php -r '
         $version = ($dashPos = strpos(PHP_VERSION, "-")) === false ? PHP_VERSION : substr(PHP_VERSION, 0, $dashPos);
@@ -311,6 +308,10 @@ buildMultiArchImage() {
   docker buildx build --push --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -f "$1.docker" \
       --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$TAG" . > "logs/$1.log" 2>&1
   out.success "Successfully built & pushed multi-arch image with tag '$TAG'"
+
+  log.info "Pulling multi-arch image '$TAG' since buildx does not support loading currently."
+  log.info 'We will likely need this image as the base for the next one.'
+  docker image pull "$TAG"
 }
 
 #######################################
