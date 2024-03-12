@@ -9,7 +9,7 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 . "$ROOT"/bin/lib/out.sh
 
 OWNER=chekote
-
+IMAGE=
 PATCH_VERSION=
 
 #######################################
@@ -22,12 +22,12 @@ PATCH_VERSION=
 #  0 if the version being build is between the two specified versions. 1 if not.
 #######################################
 versionBetween() {
-  local FULL_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
-  if versionLessThan "$FULL_VERSION" "$1"; then
+  local full_version="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+  if versionLessThan "$full_version" "$1"; then
     return 1;
   fi
 
-  if versionGreaterThan "$FULL_VERSION" "$2"; then
+  if versionGreaterThan "$full_version" "$2"; then
     return 1;
   fi
 
@@ -71,9 +71,9 @@ versionLessThan() {
 #  1 the version to assert
 #######################################
 assertVersionAtLeast() {
-  local FULL_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
-  if versionLessThan "$FULL_VERSION" "$1"; then
-    out.warn "No further images supported for PHP version $FULL_VERSION. Quitting..."
+  local full_version="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+  if versionLessThan "$full_version" "$1"; then
+    out.warn "No further images supported for PHP version $full_version. Quitting..."
     exit 0
   fi
 }
@@ -91,26 +91,27 @@ assertVersionAtLeast() {
 #######################################
 buildImage() {
   IMAGE="$1"
-  local MAJOR_TAG MINOR_TAG PATCH_TAG LATEST_TAG repo
+
+  local major_tag minor_tag patch_tag latest_tag repo
 
   TAG_SUFFIX=$([[ "$IMAGE" == "php" ]] && echo "" || echo "php")
 
-  MAJOR_TAG="$TAG_SUFFIX$MAJOR_VERSION"
-  MINOR_TAG="$MAJOR_TAG.$MINOR_VERSION"
+  major_tag="$TAG_SUFFIX$MAJOR_VERSION"
+  minor_tag="$major_tag.$MINOR_VERSION"
 
   repo="$OWNER/$IMAGE"
 
-  buildMultiArchImage "$IMAGE" "$repo:$MAJOR_TAG"
+  buildMultiArchImage "$IMAGE" "$repo:$major_tag"
   if [ "$IMAGE" = "php" ]; then
-    updatePatchVersion "$IMAGE"
+    updatePatchVersion
   fi
 
-  PATCH_TAG="$MINOR_TAG.$PATCH_VERSION"
-  LATEST_TAG="$PATCH_TAG-$(date '+%Y-%m-%d-%H-%M-%S')"
+  patch_tag="$minor_tag.$PATCH_VERSION"
+  latest_tag="$patch_tag-$(date '+%Y-%m-%d-%H-%M-%S')"
 
-  buildMultiArchImage "$IMAGE" "$repo:$MINOR_TAG"
-  buildMultiArchImage "$IMAGE" "$repo:$PATCH_TAG"
-  buildMultiArchImage "$IMAGE" "$repo:$LATEST_TAG"
+  buildMultiArchImage "$IMAGE" "$repo:$minor_tag"
+  buildMultiArchImage "$IMAGE" "$repo:$patch_tag"
+  buildMultiArchImage "$IMAGE" "$repo:$latest_tag"
 }
 
 #######################################
@@ -126,18 +127,17 @@ buildImage() {
 #   MINOR_VERSION the minor PHP version to build images for
 #######################################
 buildMultiArchImage() {
-  local IMAGE="$1"
-  local TAG="$2"
+  local tag="$2"
 
   out.info ""
   out.info "Building $1 multi-arch image with tag '$2'"
   docker buildx build --push --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -f "$1.docker" \
-      --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$TAG" . > "logs/$1.log" 2>&1
-  out.success "Successfully built & pushed multi-arch image with tag '$TAG'"
+      --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$tag" . > "logs/$1.log" 2>&1
+  out.success "Successfully built & pushed multi-arch image with tag '$tag'"
 
-  log.info "Pulling multi-arch image '$TAG' since buildx does not support loading currently."
+  log.info "Pulling multi-arch image '$tag' since buildx does not support loading currently."
   log.info 'We will likely need this image as the base for the next one.'
-  docker image pull "$TAG"
+  docker image pull "$tag"
 }
 
 #######################################
@@ -162,8 +162,6 @@ tagImage() {
 #   PATCH_VERSION the patch PHP version. e.g. 27 for 7.2.27
 #######################################
 updatePatchVersion() {
-   local IMAGE="$1"
-
    PATCH_VERSION=$(docker run --rm "$OWNER/$IMAGE:$MAJOR_VERSION" php -r '
        $version = ($dashPos = strpos(PHP_VERSION, "-")) === false ? PHP_VERSION : substr(PHP_VERSION, 0, $dashPos);
        echo explode(".", $version)[2];
