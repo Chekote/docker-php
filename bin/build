@@ -303,14 +303,14 @@ buildImage() {
 #   MINOR_VERSION the minor PHP version to build images for
 #######################################
 buildMultiArchImage() {
-    local IMAGE="$1"
-    local TAG="$2"
+  local IMAGE="$1"
+  local TAG="$2"
 
-    out.info ""
-    out.info "Building $1 multi-arch image with tag '$2'"
-    docker buildx build --push --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -f "$1.docker" \
-        --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$TAG" . > "logs/$1.log" 2>&1
-    out.success "Successfully built & pushed multi-arch image with tag '$TAG'"
+  out.info ""
+  out.info "Building $1 multi-arch image with tag '$2'"
+  docker buildx build --push --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -f "$1.docker" \
+      --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$TAG" . > "logs/$1.log" 2>&1
+  out.success "Successfully built & pushed multi-arch image with tag '$TAG'"
 }
 
 #######################################
