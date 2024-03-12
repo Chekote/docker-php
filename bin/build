@@ -11,172 +11,6 @@ ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 REPO=chekote/php
 
 PATCH_VERSION=
-TOKEN=
-
-#######################################
-# Grabs a token from auth.docker.com for use with the Docker API V2
-#
-# Globals:
-#   TOKEN
-# Return:
-#  0 if the auth succeed. 1 if not.
-#######################################
-dockerAuth() {
-  local RESPONSE
-  RESPONSE="$(curl 'https://auth.docker.io/token?service=registry.docker.io&scope=repository:'chekote/php':pull' 2>/dev/null)"
-  TOKEN=$(echo "$RESPONSE" | jq -r .token)
-
-  if [ "$TOKEN" == null ]; then
-    out.error "Docker login failed: $RESPONSE"
-    return 1
-  fi
-
-  return 0
-}
-
-#######################################
-# Provides the latest tag that has been published for the specified tag and suffix
-#
-# Will check if "$REPO:$TAG$SUFFIX" is available first, followed by "$REPO:$TAG-{a..z}$SUFFIX". The last tag that
-# exists will be echoed to stdout. If the tag does not exist, then an empty string will be echoed to stdout.
-#
-# Arguments:
-#   1 the tag, e.g. 5.3.6
-#   2 the tag suffix, e.g. -phpunit6
-#######################################
-latestTag() {
-  local TAG="$1"
-  local SUFFIX="$2"
-  local LATEST_TAG
-
-  log.info "Checking if $TAG$SUFFIX exists"
-  if ! tagExists "$TAG$SUFFIX"; then
-    log.info "Tag $TAG$SUFFIX does not exist"
-    log.info "There is no latest tag"
-    echo ""
-    return 0
-  else
-    log.info "Tag $TAG$SUFFIX exists"
-  fi
-
-  LATEST_TAG="$TAG$SUFFIX"
-  log.info "latestTag::LATEST_TAG is now $LATEST_TAG"
-  for X in {a..z}; do
-    NEXT_TAG="$TAG.$X$SUFFIX"
-    if tagExists "$NEXT_TAG"; then
-      log.info "Tag $NEXT_TAG exists"
-      LATEST_TAG="$NEXT_TAG"
-      log.info "latestTag::LATEST_TAG is now $LATEST_TAG"
-    else
-      log.info "Tag $NEXT_TAG does not exist"
-      log.info "$LATEST_TAG is the latest tag"
-      break
-    fi
-  done
-
-  log.info "returning $LATEST_TAG"
-  echo "$LATEST_TAG"
-}
-
-#######################################
-# Determines the next available tag for the specified tag and suffix
-#
-# Will check if "$REPO:$TAG$SUFFIX" is available first, and if not will check"$REPO:$TAG-{a..z}$SUFFIX".
-# If an available tag is found, it will be echoed to stdout
-#
-# Arguments:
-#   1 the tag, e.g. 5.3.6
-#   2 the tag suffix, e.g. -phpunit6
-# Returns:
-#   0 if a next available tag was found. 1 if no tags are available.
-#######################################
-nextAvailableTag() {
-  local TAG="$1"
-  local SUFFIX="$2"
-  local NEXT_TAG
-
-  if ! tagExists "$TAG$SUFFIX"; then
-    echo "$TAG$SUFFIX"
-    return 0
-  fi
-
-  for X in {a..z}; do
-    NEXT_TAG="$TAG.$X$SUFFIX"
-    if ! tagExists "$NEXT_TAG"; then
-      echo "$NEXT_TAG"
-      return 0
-    fi
-  done
-
-  echo "No available tags for $TAG$SUFFIX"
-  return 1
-}
-
-#######################################
-# Checks if the specified tag exists in the chekote/php repo
-#
-# Arguments:
-#  1 the tag
-# Return:
-#  0 if the tag exists, 1 if not (or an error occurred).
-#######################################
-tagExists() {
-  log.info "Checking for existence of tag $1"
-  curl -s -H "Authorization: Bearer $TOKEN" https://index.docker.io/v2/chekote/php/tags/list | jq -r .tags | grep "\"$1\"" > /dev/null 2>&1
-}
-
-#######################################
-# Gets the SHA for a tag
-#
-# Arguments:
-#  1 the tag
-#######################################
-tagSHA() {
-  log.info "Getting SHA for tag $1"
-  curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-      "https://index.docker.io/v2/chekote/php/manifests/$1" | jq -r .config.digest | cut -d':' -f 2
-}
-
-#######################################
-# Gets the patch tag for the image being built
-#
-# Arguments:
-#  1 the tag
-#  1 the tag suffix
-#  1 the SHA of the image
-# Returns:
-#   0 if a patch tag could be determined. 1 if no tags are available.
-#######################################
-patchTag() {
-  local TAG="$1"
-  local SUFFIX="$2"
-  local SHA="$3"
-  local LATEST_TAG=''
-
-  log.info "Checking if $TAG$SUFFIX exists"
-  if ! tagExists "$TAG$SUFFIX"; then
-    log.info "Tag $TAG$SUFFIX does not exist"
-    echo "$TAG$SUFFIX"
-    return 0
-  else
-    log.info "Tag $TAG$SUFFIX exists"
-  fi
-
-  log.info "patchTag::LATEST_TAG before: '$LATEST_TAG'"
-  LATEST_TAG=$(latestTag "$TAG" "$SUFFIX")
-  log.info "patchTag::LATEST_TAG after: '$LATEST_TAG'"
-
-  LATEST_TAG_SHA=$(tagSHA "$LATEST_TAG");
-  log.info "Latest Tag ($LATEST_TAG) SHA: $LATEST_TAG_SHA"
-  log.info "New SHA: $SHA"
-
-  if [ "$LATEST_TAG_SHA" = "$SHA" ]; then
-    echo "$LATEST_TAG"
-    return 0
-  fi
-
-  nextAvailableTag "$TAG" "$SUFFIX"
-}
 
 #######################################
 # Checks that the PHP version being built is between the two specified versions (inclusive)
@@ -258,29 +92,22 @@ assertVersionAtLeast() {
 #######################################
 buildImage() {
   IMAGE="$1"
-  local TAG_SUFFIX
-  local PATCH_TAG
-  local SHA
+  local MAJOR_TAG MINOR_TAG PATCH_TAG LATEST_TAG
 
-  TAG_SUFFIX=$([[ "$IMAGE" == "php" ]] && echo "" || echo "-$IMAGE")
-
-  local MAJOR_TAG="$MAJOR_VERSION$TAG_SUFFIX"
-  local MINOR_TAG="$MAJOR_VERSION.$MINOR_VERSION$TAG_SUFFIX"
+  MAJOR_TAG="$MAJOR_VERSION"
+  MINOR_TAG="$MAJOR_VERSION.$MINOR_VERSION"
 
   buildMultiArchImage "$IMAGE" "$REPO:$MAJOR_TAG"
-
   if [ "$IMAGE" = "php" ]; then
     updatePatchVersion
   fi
 
-  SHA=$(docker image inspect "$REPO:$MAJOR_TAG" | jq -r '.[0].Id' | cut -d':' -f 2);
-
-  log.info "Determining Patch Tag"
-  PATCH_TAG=$(patchTag "$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION" "$TAG_SUFFIX" "$SHA")
-  log.info "Patch Tag: $PATCH_TAG"
+  PATCH_TAG="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
+  LATEST_TAG="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION-$(date '+%Y-%m-%d-%H-%M-%S')"
 
   buildMultiArchImage "$IMAGE" "$REPO:$MINOR_TAG"
   buildMultiArchImage "$IMAGE" "$REPO:$PATCH_TAG"
+  buildMultiArchImage "$IMAGE" "$REPO:$LATEST_TAG"
 }
 
 #######################################
@@ -373,8 +200,6 @@ buildAll() {
   buildImage laravel10.x
   buildImage phpunit10
 }
-
-dockerAuth
 
 out.info "Please enter the major PHP version (e.g. 5, 7), followed by [ENTER]:"
 read MAJOR_VERSION
