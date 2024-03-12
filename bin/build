@@ -201,11 +201,8 @@ buildAll() {
   buildImage phpunit10
 }
 
-out.info "Please enter the major PHP version (e.g. 5, 7), followed by [ENTER]:"
-read MAJOR_VERSION
+for version in '8.1' '8.2' '8.3'; do
+  IFS='.' read -r MAJOR_VERSION MINOR_VERSION <<< "$version"
 
-out.info ""
-out.info "Please enter the minor PHP version (e.g. 1, 2, 3), followed by [ENTER]:"
-read MINOR_VERSION
-
-buildAll
+  buildAll
+done
