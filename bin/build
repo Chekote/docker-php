@@ -270,11 +270,7 @@ buildImage() {
   buildMultiArchImage "$IMAGE" "$REPO:$MAJOR_TAG"
 
   if [ "$IMAGE" = "php" ]; then
-    PATCH_VERSION=$(docker run --rm "$REPO:$MAJOR_VERSION" php -r '
-        $version = ($dashPos = strpos(PHP_VERSION, "-")) === false ? PHP_VERSION : substr(PHP_VERSION, 0, $dashPos);
-        echo explode(".", $version)[2];
-    ')
-    log.info "PHP Patch Version: $PATCH_VERSION"
+    updatePatchVersion
   fi
 
   SHA=$(docker image inspect "$REPO:$MAJOR_TAG" | jq -r '.[0].Id' | cut -d':' -f 2);
@@ -324,6 +320,20 @@ buildMultiArchImage() {
 tagImage() {
   docker image tag "$1" "$2"
   out.success "Successfully tagged $2"
+}
+
+#######################################
+# Extracts the patch version from PHP major version image
+#
+# Globals:
+#   PATCH_VERSION the patch PHP version. e.g. 27 for 7.2.27
+#######################################
+updatePatchVersion() {
+   PATCH_VERSION=$(docker run --rm "$REPO:$MAJOR_VERSION" php -r '
+       $version = ($dashPos = strpos(PHP_VERSION, "-")) === false ? PHP_VERSION : substr(PHP_VERSION, 0, $dashPos);
+       echo explode(".", $version)[2];
+   ')
+   log.info "PHP Patch Version: $PATCH_VERSION"
 }
 
 #######################################
