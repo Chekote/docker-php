@@ -107,7 +107,7 @@ buildImage() {
   fi
 
   patch_tag="$minor_tag.$PATCH_VERSION"
-  latest_tag="$patch_tag-$(date '+%Y-%m-%d-%H-%M-%S')"
+  latest_tag="$patch_tag-2024-03-13-09-17-04"
 
   buildMultiArchImage "$IMAGE" "$repo:$minor_tag"
   buildMultiArchImage "$IMAGE" "$repo:$patch_tag"
