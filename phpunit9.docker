@@ -1,6 +1,6 @@
 # chekote/php:${PHP_VERSION}-phpunit9
 ARG PHP_VERSION=7.4
-FROM chekote/php:${PHP_VERSION}-phpunit5
+FROM chekote/phpunit8:php${PHP_VERSION}
 
 ENV MIN_PHP_VERSION '7.3'
 
