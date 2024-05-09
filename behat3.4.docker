@@ -1,4 +1,8 @@
-# chekote/php:${PHP_VERSION}-behat3.4
+# chekote/behat3.4:latest
+# chekote/behat3.4:php${PHP_MAJOR_VERSION}
+# chekote/behat3.4:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
+# chekote/behat3.4:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
+# chekote/behat3.4:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
 ARG PHP_VERSION=7.2
 FROM chekote/composer:php${PHP_VERSION}
 
