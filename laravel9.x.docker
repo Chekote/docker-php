@@ -17,7 +17,8 @@ RUN set -eu; \
     apt-get install -y --no-install-recommends \
         #
         # Laravel requirements (beyond base image).
-        # Laravel requirements. See https://laravel.com/docs/${SUPPORTED_LARAVEL_VERSION}/deployment
+        # See https://laravel.com/docs/9.x/deployment#server-requirements
+        # See https://github.com/laravel/laravel/blob/9.x/composer.json
         php${PHP_VERSION}-curl \
         php${PHP_VERSION}-dom; \
     #
