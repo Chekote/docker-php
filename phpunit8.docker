@@ -8,10 +8,6 @@ FROM chekote/composer:php${PHP_VERSION}
 
 ENV MIN_PHP_VERSION '7.2'
 
-# No additional package requirements beyond base image.
-# See https://github.com/sebastianbergmann/phpunit/blob/8.0.0/composer.json
-# See https://phpunit.readthedocs.io/en/8.5/installation.html#requirements
-
 RUN set -eu; \
     #
     check_php_version ${MIN_PHP_VERSION}; \
