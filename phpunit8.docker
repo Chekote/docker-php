@@ -20,8 +20,8 @@ RUN set -eu; \
     apt-get install -y --no-install-recommends \
         #
         # PHPUnit requirements.
-        # See https://github.com/sebastianbergmann/phpunit/blob/5.0.0/composer.json
-        # See https://phpunit.de/manual/5.0/en/installation.html#installation.requirements
+        # See https://github.com/sebastianbergmann/phpunit/blob/8.0.0/composer.json
+        # See https://docs.phpunit.de/en/8.5/installation.html#requirements
         php${PHP_VERSION}-dom \
         #php${PHP_VERSION}-json \ (already included)
         #php${PHP_VERSION}-libxml \ (already included)
