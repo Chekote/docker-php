@@ -1,6 +1,6 @@
 # chekote/php:${PHP_VERSION}-laravel${SUPPORTED_LARAVEL_VERSION}
 ARG PHP_VERSION=7.4
-FROM chekote/php:${PHP_VERSION}-composer
+FROM chekote/composer:php${PHP_VERSION}
 
 ENV SUPPORTED_LARAVEL_VERSION '7.x'
 ENV MIN_PHP_VERSION '7.2.5'
