@@ -23,7 +23,6 @@ RUN set -eu; \
         # See https://github.com/sebastianbergmann/phpunit/blob/8.0.0/composer.json
         # See https://docs.phpunit.de/en/8.5/installation.html#requirements
         php${PHP_VERSION}-dom \
-        #php${PHP_VERSION}-json \ (already included)
         #php${PHP_VERSION}-libxml \ (already included)
         php${PHP_VERSION}-mbstring \
         #php${PHP_VERSION}-pcre \ (already included)
