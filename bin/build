@@ -101,6 +101,7 @@ buildImage() {
 
   repo="$OWNER/$IMAGE"
 
+  buildMultiArchImage "$IMAGE" "$repo:latest"
   buildMultiArchImage "$IMAGE" "$repo:$major_tag"
   if [ "$IMAGE" = "php" ]; then
     updatePatchVersion
