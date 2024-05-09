@@ -1,6 +1,6 @@
 # chekote/php:${PHP_VERSION}-laravel${SUPPORTED_LARAVEL_VERSION}
 ARG PHP_VERSION=8.0
-FROM chekote/php:${PHP_VERSION}-laravel8.x
+FROM chekote/laravel8.x:php${PHP_VERSION}
 
 ENV SUPPORTED_LARAVEL_VERSION '9.x'
 ENV MIN_PHP_VERSION '8.0'
