@@ -19,7 +19,6 @@ RUN set -eu; \
         # See https://github.com/sebastianbergmann/phpunit/blob/10.0.0/composer.json
         # See https://docs.phpunit.de/en/10.4/installation.html
         php${PHP_VERSION}-dom \
-        #php${PHP_VERSION}-json \ (already included)
         #php${PHP_VERSION}-libxml \ (included as part of ???)
         php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-xml \
