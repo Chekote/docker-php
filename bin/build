@@ -195,7 +195,13 @@ buildAll() {
 
   #requires 7.3
   assertVersionAtLeast 7.3
-  buildImage laravel8.x
+
+  if versionBetween 7.3 8.1; then
+    buildImage laravel8.x
+  else
+    out.warn "Skipping Laravel 8.x. PHP version is not between 7.3 & 8.1"
+  fi
+
   buildImage phpunit9
 
   #requires 8.0
