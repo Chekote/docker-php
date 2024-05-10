@@ -4,7 +4,7 @@
 # chekote/phpunit9:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
 # chekote/phpunit9:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
 ARG PHP_VERSION=7.4
-FROM chekote/phpunit8:php${PHP_VERSION}
+FROM chekote/phpunit8:php$PHP_VERSION
 
 ENV MIN_PHP_VERSION '7.3'
 
@@ -14,8 +14,8 @@ ENV MIN_PHP_VERSION '7.3'
 
 RUN set -eu; \
     #
-    check_php_version ${MIN_PHP_VERSION}; \
+    check_php_version $MIN_PHP_VERSION; \
     #
     # Make sure everything works
     php -v; \
-    php-fpm${PHP_VERSION} -v
+    php-fpm$PHP_VERSION -v
