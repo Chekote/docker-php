@@ -4,11 +4,43 @@
 # chekote/laravel10.x:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
 # chekote/laravel10.x:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
 ARG PHP_VERSION=8.1
-FROM chekote/php:${PHP_VERSION}-laravel9.x
+FROM chekote/composer:php${PHP_VERSION}
 
 ENV SUPPORTED_LARAVEL_VERSION '10.x'
 ENV MIN_PHP_VERSION '8.1'
+ENV MAX_PHP_VERSION '8.3.999'
 
 RUN set -eu; \
     #
-    check_php_version ${MIN_PHP_VERSION};
+    check_php_version ${MIN_PHP_VERSION} ${MAX_PHP_VERSION}; \
+    #
+    apt-get update; \
+    apt-get install -y --no-install-recommends --no-install-suggests \
+        #
+        # Laravel requirements
+        # See https://laravel.com/docs/10.x/deployment#server-requirements
+        # See https://github.com/laravel/laravel/blob/10.x/composer.json
+        php${PHP_VERSION}-ctype \
+        php${PHP_VERSION}-curl \
+        php${PHP_VERSION}-dom \
+        php${PHP_VERSION}-fileinfo \
+        # php${PHP_VERSION}-filter \ (already included)
+        # php${PHP_VERSION}-hash \ (already included)
+        php${PHP_VERSION}-mbstring \
+        # php${PHP_VERSION}-openssl \ (already included)
+        # php${PHP_VERSION}-pcre \ (already included)
+        php${PHP_VERSION}-pdo \
+        # php${PHP_VERSION}-session \ (already included)
+        php${PHP_VERSION}-tokenizer \
+        php${PHP_VERSION}-xml \
+        ; \
+    #
+    # Cleanup
+    apt-get autoremove -y; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*; \
+    rm -rf /var/cache/apt/*; \
+    #
+    # Make sure everything works
+    php -v; \
+    php-fpm${PHP_VERSION} -v
