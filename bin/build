@@ -2,11 +2,10 @@
 
 set -euo pipefail;
 
-ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
-
-. "$ROOT"/bin/lib/colors.sh
-. "$ROOT"/bin/lib/log.sh
-. "$ROOT"/bin/lib/out.sh
+. bin/lib/colors.bash
+. bin/lib/docker.bash
+. bin/lib/log.bash
+. bin/lib/out.bash
 
 OWNER=chekote
 IMAGE=
@@ -73,7 +72,7 @@ versionLessThan() {
 assertVersionAtLeast() {
   local full_version="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
   if versionLessThan "$full_version" "$1"; then
-    out.warn "No further images supported for PHP version $full_version. Quitting..."
+    out.warn.ln "No further images supported for PHP version $full_version. Quitting..."
     exit 0
   fi
 }
@@ -103,7 +102,7 @@ buildImage() {
 
   buildMultiArchImage "$IMAGE" "$repo:latest"
   buildMultiArchImage "$IMAGE" "$repo:$major_tag"
-  if [ "$IMAGE" = "php" ]; then
+  if [[ "$IMAGE" = "php" ]]; then
     updatePatchVersion
   fi
 
@@ -130,15 +129,15 @@ buildImage() {
 buildMultiArchImage() {
   local tag="$2"
 
-  out.info ""
-  out.info "Building $1 multi-arch image with tag '$2'"
-  docker buildx build --push --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -f "$1.docker" \
+  out.info.ln ""
+  out.info.ln "Building $1 multi-arch image with tag '$2'"
+  shell.command.retry docker buildx build --push --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -f "$1.docker" \
       --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$tag" . > "logs/$1.log" 2>&1
-  out.success "Successfully built & pushed multi-arch image with tag '$tag'"
+  out.success.ln "Successfully built & pushed multi-arch image with tag '$tag'"
 
   log.info "Pulling multi-arch image '$tag' since buildx does not support loading currently."
   log.info 'We will likely need this image as the base for the next one.'
-  docker image pull "$tag"
+  shell.command.retry docker image pull "$tag"
 }
 
 #######################################
@@ -150,7 +149,7 @@ buildMultiArchImage() {
 #######################################
 tagImage() {
   docker image tag "$1" "$2"
-  out.success "Successfully tagged $2"
+  out.success.ln "Successfully tagged $2"
 }
 
 #######################################
@@ -223,3 +222,5 @@ for version in '8.1' '8.2' '8.3'; do
 
   buildAll
 done
+
+out.success "FIN!"
