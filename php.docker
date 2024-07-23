@@ -3,7 +3,7 @@
 # chekote/php:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
 # chekote/php:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
 # chekote/php:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
-FROM chekote/ubuntu:jammy-2024-05-09
+FROM chekote/ubuntu:noble-2024-07-23
 
 ARG PHP_VERSION=7.3
 ENV PHP_VERSION $PHP_VERSION
