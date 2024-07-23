@@ -131,7 +131,7 @@ buildMultiArchImage() {
 
   out.info.ln ""
   out.info.ln "Building $1 multi-arch image with tag '$2'"
-  shell.command.retry docker buildx build --push --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -f "$1.docker" \
+  shell.command.retry docker buildx build --push --platform linux/arm64/v8,linux/amd64 -f "$1.docker" \
       --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$tag" . > "logs/$1.log" 2>&1
   out.success.ln "Successfully built & pushed multi-arch image with tag '$tag'"
 
