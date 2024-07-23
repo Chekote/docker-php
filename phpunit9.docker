@@ -6,7 +6,7 @@
 ARG PHP_VERSION=7.4
 FROM chekote/phpunit8:php$PHP_VERSION
 
-ENV MIN_PHP_VERSION '7.3'
+ENV MIN_PHP_VERSION='7.3'
 
 # No additional package requirements beyond base image.
 # See https://github.com/sebastianbergmann/phpunit/blob/9.0.0/composer.json

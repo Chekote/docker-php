@@ -6,7 +6,7 @@
 ARG PHP_VERSION=7.2
 FROM chekote/php:${PHP_VERSION}
 
-ENV MIN_PHP_VERSION '5.3.2'
+ENV MIN_PHP_VERSION='5.3.2'
 
 RUN set -eu; \
     #
