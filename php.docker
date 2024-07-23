@@ -6,7 +6,7 @@
 FROM chekote/ubuntu:noble-2024-07-23
 
 ARG PHP_VERSION=7.3
-ENV PHP_VERSION $PHP_VERSION
+ENV PHP_VERSION=$PHP_VERSION
 
 # Fix add-apt-repository is broken with non-UTF-8 locales, see https://github.com/oerdnj/deb.sury.org/issues/56
 ENV LC_ALL C.UTF-8
