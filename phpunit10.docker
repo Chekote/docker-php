@@ -19,6 +19,7 @@ RUN set -eu; \
         # See https://github.com/sebastianbergmann/phpunit/blob/10.0.0/composer.json
         # See https://docs.phpunit.de/en/10.5/installation.html
         php${PHP_VERSION}-dom \
+        #php${PHP_VERSION}-json \ (included as part of PHP 8)
         #php${PHP_VERSION}-libxml \ (included as part of ???)
         php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-xml \
@@ -27,11 +28,6 @@ RUN set -eu; \
         # Code coverage requirements
         php${PHP_VERSION}-pcov \
         php${PHP_VERSION}-xdebug; \
-    #
-    # php-json is not available for PHP 8, so only install it if we're working with lower than 8
-    if php -r "exit((int) version_compare('8.0', phpversion(), '<'));"; then \
-      apt-get install -y --no-install-recommends php${PHP_VERSION}-json; \
-    fi; \
     #
     # Cleanup
     apt-get autoremove -y; \
