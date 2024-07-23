@@ -1,0 +1,40 @@
+# chekote/phpunit11:latest
+# chekote/phpunit11:php${PHP_MAJOR_VERSION}
+# chekote/phpunit11:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
+# chekote/phpunit11:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
+# chekote/phpunit11:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
+ARG PHP_VERSION=8.2
+FROM chekote/composer:php$PHP_VERSION
+
+ENV MIN_PHP_VERSION '8.2'
+
+RUN set -eu; \
+    #
+    check_php_version $MIN_PHP_VERSION; \
+    #
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        #
+        # PHPUnit requirements.
+        # See https://github.com/sebastianbergmann/phpunit/blob/11.0.0/composer.json
+        # See https://docs.phpunit.de/en/11.2/installation.html
+        php${PHP_VERSION}-dom \
+        #php${PHP_VERSION}-json \ (included as part of PHP 8)
+        #php${PHP_VERSION}-libxml \ (included as part of ???)
+        php${PHP_VERSION}-mbstring \
+        php${PHP_VERSION}-xml \
+        php${PHP_VERSION}-xmlwriter \
+        #
+        # Code coverage requirements
+        php${PHP_VERSION}-pcov \
+        php${PHP_VERSION}-xdebug; \
+    #
+    # Cleanup
+    apt-get autoremove -y; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/*; \
+    rm -rf /var/cache/apt/*; \
+    #
+    # Make sure everything works
+    php -v; \
+    php-fpm$PHP_VERSION -v
