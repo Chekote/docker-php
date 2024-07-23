@@ -68,13 +68,17 @@ versionLessThan() {
 #
 # Arguments:
 #  1 the version to assert
+# Return:
+#  0 if the version being build is equal to or higher than the specified version. 1 if not.
 #######################################
 assertVersionAtLeast() {
   local full_version="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
   if versionLessThan "$full_version" "$1"; then
     out.warn.ln "No further images supported for PHP version $full_version. Quitting..."
-    exit 0
+    return 1
   fi
+
+  return 0
 }
 
 #######################################
@@ -207,7 +211,10 @@ buildAll() {
   fi
 
   #requires 8.1
-  assertVersionAtLeast 8.1
+  if ! assertVersionAtLeast 8.1; then
+    out.warn "No further images supported for PHP version $MAJOR_VERSION.$MINOR_VERSION."
+    return
+  fi
   buildImage phpunit10
 
   if versionBetween 8.1 8.3.999; then
@@ -217,7 +224,10 @@ buildAll() {
   fi
 
   #requires 8.2
-  assertVersionAtLeast 8.2
+  if ! assertVersionAtLeast 8.2; then
+    out.warn "No further images supported for PHP version $MAJOR_VERSION.$MINOR_VERSION."
+    return
+  fi
   buildImage phpunit11
   buildImage laravel11.x
 }
