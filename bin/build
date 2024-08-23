@@ -105,7 +105,11 @@ buildImage() {
   repo="$OWNER/$IMAGE"
 
   buildMultiArchImage "$IMAGE" "$repo:latest"
+  pushImage "$repo:latest"
+
   buildMultiArchImage "$IMAGE" "$repo:$major_tag"
+  pushImage "$repo:$major_tag"
+
   if [[ "$IMAGE" = "php" ]]; then
     updatePatchVersion
   fi
@@ -114,14 +118,17 @@ buildImage() {
   latest_tag="$patch_tag-$(date '+%Y-%m-%d-%H-%M-%S')"
 
   buildMultiArchImage "$IMAGE" "$repo:$minor_tag"
+  pushImage "$repo:$minor_tag"
+
   buildMultiArchImage "$IMAGE" "$repo:$patch_tag"
+  pushImage "$repo:$patch_tag"
+
   buildMultiArchImage "$IMAGE" "$repo:$latest_tag"
+  pushImage "$repo:$latest_tag"
 }
 
 #######################################
-# Builds and pushes a multi-arch image
-#
-# Ideally this should just build and not push, but buildx does not currently support loading.
+# Builds a multi-arch image
 #
 # Arguments:
 #   1 the image to build. Must have a matching .docker file in the root of the project.
@@ -131,17 +138,29 @@ buildImage() {
 #   MINOR_VERSION the minor PHP version to build images for
 #######################################
 buildMultiArchImage() {
+  local image="$1"
   local tag="$2"
 
   out.info.ln ""
-  out.info.ln "Building $1 multi-arch image with tag '$2'"
-  shell.command.retry docker buildx build --push --platform linux/arm64/v8,linux/amd64 -f "$1.docker" \
-      --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$tag" . > "logs/$1.log" 2>&1
-  out.success.ln "Successfully built & pushed multi-arch image with tag '$tag'"
+  out.info.ln "Building $image multi-arch image with tag '$tag'"
+  shell.command.retry docker build --platform linux/arm64/v8,linux/amd64 -f "$image.docker" \
+      --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$tag" . > "logs/$image.log" 2>&1
+  out.success.ln "Successfully built multi-arch image with tag '$tag'"
+}
 
-  log.info "Pulling multi-arch image '$tag' since buildx does not support loading currently."
-  log.info 'We will likely need this image as the base for the next one.'
-  shell.command.retry docker image pull "$tag"
+
+#######################################
+# Pushes an image
+#
+# Arguments:
+#   1 the tag of the image to push
+#######################################
+pushImage() {
+  local tag="$1"
+
+  out.info.ln "Pushing image '$tag'"
+  shell.command.retry docker push "$tag"
+  out.success.ln "Successfully pushed '$tag'"
 }
 
 #######################################
