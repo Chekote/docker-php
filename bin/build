@@ -251,7 +251,7 @@ buildAll() {
   buildImage laravel11.x
 }
 
-for version in '8.1' '8.2' '8.3'; do
+for version in '8.1' '8.2' '8.3' '8.4'; do
   IFS='.' read -r MAJOR_VERSION MINOR_VERSION <<< "$version"
 
   buildAll
