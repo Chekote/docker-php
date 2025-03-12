@@ -239,6 +239,7 @@ buildAll() {
   fi
   buildImage phpunit11
   buildImage laravel11.x
+  buildImage laravel12.x
 }
 
 for version in '8.1' '8.2' '8.3' '8.4'; do
