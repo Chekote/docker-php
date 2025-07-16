@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 
 if [ "$PHP_FPM_USER_ID" != "" ]; then
-    usermod -u $PHP_FPM_USER_ID nobody
+    usermod -u "$PHP_FPM_USER_ID" nobody
 fi
 
 # Set php.ini options
-PHP_INI=/etc/php$PHP_MAJOR_VERSION/php.ini
+PHP_INI="/etc/php$PHP_MAJOR_VERSION/php.ini"
 
 # Update the PHP upload_max_filesize setting if one was specified
 if [ "$PHP_UPLOAD_MAX_FILESIZE" != "" ]; then
