@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 replace_in_files() {
     PHP_CONFIG_FILES="$1"
