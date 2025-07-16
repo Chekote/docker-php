@@ -3,17 +3,19 @@
 # chekote/php-alpine-composer:${PHP_MAJOR_VERSION}-${PHP_MINOR_VERSION}-$PHP_PATCH_VERSION
 # chekote/php-alpine-composer:${PHP_MAJOR_VERSION}-${PHP_MINOR_VERSION}-${PHP_PATCH_VERSION}-$(date +"%Y-%m-%d-%H-%M-%S")
 ARG PHP_MAJOR_VERSION=8
-FROM chekote/php-alpine:$PHP_MAJOR_VERSION
+ARG PHP_MINOR_VERSION=4
+
+FROM chekote/php-alpine:$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION
 
 RUN set -euo pipefail; \
     apk add \
         #
         # Composer requirements. See https://getcomposer.org/doc/00-intro.md#system-requirements
         git \
-        php${PHP_MAJOR_VERSION}-mbstring \
-        php${PHP_MAJOR_VERSION}-curl \
-        php${PHP_MAJOR_VERSION}-iconv \
-        php${PHP_MAJOR_VERSION}-openssl \
-        php${PHP_MAJOR_VERSION}-phar \
-        php${PHP_MAJOR_VERSION}-zip \
+        php${PHP_VERSION}-mbstring \
+        php${PHP_VERSION}-curl \
+        php${PHP_VERSION}-iconv \
+        php${PHP_VERSION}-openssl \
+        php${PHP_VERSION}-phar \
+        php${PHP_VERSION}-zip \
         unzip
