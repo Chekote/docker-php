@@ -5,7 +5,7 @@
 FROM chekote/alpine:latest
 
 ARG PHP_MAJOR_VERSION=8
-ENV PHP_MAJOR_VERSION $PHP_MAJOR_VERSION
+ENV PHP_MAJOR_VERSION=$PHP_MAJOR_VERSION
 
 RUN set -euo pipefail; \
     apk add \
