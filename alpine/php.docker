@@ -8,6 +8,8 @@ ARG PHP_MAJOR_VERSION=8
 ENV PHP_MAJOR_VERSION=$PHP_MAJOR_VERSION
 
 RUN set -euo pipefail; \
+    #
+    # Install PHP
     apk add \
         #
         # usermod
