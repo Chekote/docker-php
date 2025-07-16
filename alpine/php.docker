@@ -9,6 +9,9 @@ ENV PHP_MAJOR_VERSION=$PHP_MAJOR_VERSION
 
 RUN set -euo pipefail; \
     #
+    # Update package index
+    apk update; \
+    #
     # Install PHP
     apk add \
         #
