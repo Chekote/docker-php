@@ -1,5 +1,19 @@
 #!/usr/bin/env sh
 
+replace_var_in_files() {
+    local PHP_CONFIG_FILES="$1"
+    local VAR_NAME="$2"
+
+    # get the directive name by removing the prefixes e.g. PHP_CLI and making them lowercase.
+    # if there are any double '_' replace with a dot.
+    DIRECTIVE=$(echo "$VAR_NAME" | cut -c9- | tr '[:upper:]' '[:lower:]' | sed 's!__!.!g')
+    VALUE=$(printenv "$VAR_NAME")
+
+    # Replace the variable only if it starts with the name of the directive and remove optional ';'
+    # Some directives will not have spaces after the directive name. i.e opcache
+    find "$PHP_CONFIG_FILES" -follow -type f -exec sed -i "s!^;\?$DIRECTIVE \?=[^\n]*!$DIRECTIVE=$VALUE!g" {} \;
+}
+
 replace_in_files() {
     PHP_CONFIG_FILES="$1"
     VAR_MATCH="$2"
@@ -8,15 +22,7 @@ replace_in_files() {
     # If there are variables to be replace move forward
     if [ -n "$REPLACE_VARS" ]; then
       for VAR_NAME in $REPLACE_VARS; do
-        # get the directive name by removing the prefixes e.g. PHP_CLI and making them lowercase.
-        # if there are any double '_' replace with a dot.
-        DIRECTIVE=$(echo "$VAR_NAME" | cut -c9- | tr '[:upper:]' '[:lower:]' | sed 's!__!.!g')
-        VALUE=$(printenv "$VAR_NAME")
-
-        # Replace the variable only if it starts with the name of the directive and remove optional ';'
-        # Some directives will not have spaces after the directive name. i.e opcache
-        find "$PHP_CONFIG_FILES" -follow -type f -exec \
-            sed -i "s!^;\?$DIRECTIVE \?=[^\n]*!$DIRECTIVE=$VALUE!g" {} \;
+        replace_var_in_files "$PHP_CONFIG_FILES" "$VAR_NAME"
       done
     fi
 }
