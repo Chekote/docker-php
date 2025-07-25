@@ -11,7 +11,7 @@ replace_var_in_files() {
 
     # Replace the variable only if it starts with the name of the directive and remove optional ';'
     # Some directives will not have spaces after the directive name. i.e opcache
-    find "$PHP_CONFIG_FILES" -follow -type f -exec sed -i "s!^;\?$DIRECTIVE \?=[^\n]*!$DIRECTIVE=$VALUE!g" {} \;
+    find $PHP_CONFIG_FILES -follow -type f -exec sed -i "s!^;\?$DIRECTIVE \?=[^\n]*!$DIRECTIVE=$VALUE!g" {} \;
 }
 
 replace_in_files() {
@@ -27,9 +27,41 @@ replace_in_files() {
     fi
 }
 
+get_config_files() {
+  local TYPE="$1"
+
+  distro="$(get_distro_name)"
+
+  case "$distro" in
+      alpine)
+          if [ "$TYPE" = "fpm" ]; then
+              echo "/etc/php$PHP_VERSION/php-fpm.*"
+          else
+              echo "/etc/php$PHP_VERSION/conf.d /etc/php$PHP_VERSION/php.ini"
+          fi
+          ;;
+      ubuntu)
+          echo "/etc/php/$PHP_VERSION/$TYPE"
+          ;;
+      *)
+          echo "Unknown distro: $distro" >&2
+          return 1
+          ;;
+  esac
+}
+
+get_distro_name() {
+  if [ -f /etc/os-release ]; then
+    sed -n 's/^ID=//p' /etc/os-release | tr -d '"'
+  else
+    echo "unknown"
+    return 1
+  fi
+}
+
 # Set php.ini options
 for TYPE in cli fpm; do
-    PHP_CONFIG_FILES="/etc/php/$PHP_VERSION/$TYPE/"
+    PHP_CONFIG_FILES="$(get_config_files $TYPE)"
     VAR_TYPE="$(echo "PHP_$TYPE" | tr '[:lower:]' '[:upper:]')"
 
     # Replace all variables ( prefixed by PHP_TYPE ) on the proper PHP type file
