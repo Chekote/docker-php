@@ -7,6 +7,8 @@ FROM chekote/alpine:latest
 
 ARG PHP_MAJOR_VERSION=8
 ARG PHP_MINOR_VERSION=4
+
+# Alpine packages are named like php84 (without a period)
 ENV PHP_VERSION=$PHP_MAJOR_VERSION$PHP_MINOR_VERSION
 
 RUN set -euo pipefail; \

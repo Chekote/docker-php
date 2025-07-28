@@ -5,8 +5,11 @@
 # chekote/php:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
 FROM chekote/ubuntu:latest
 
-ARG PHP_VERSION=7.3
-ENV PHP_VERSION=$PHP_VERSION
+ARG PHP_MAJOR_VERSION=8
+ARG PHP_MINOR_VERSION=4
+
+# Ubuntu packages are named like php8.4 (with a period)
+ENV PHP_VERSION=$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION
 
 # Fix add-apt-repository is broken with non-UTF-8 locales, see https://github.com/oerdnj/deb.sury.org/issues/56
 ENV LC_ALL=C.UTF-8

@@ -142,7 +142,9 @@ buildMultiArchImage() {
   out.info.ln ""
   out.info.ln "Building $image multi-arch image with tag '$tag'"
   shell.command.retry docker build --platform linux/arm64,linux/amd64 -f "$image.docker" \
-      --build-arg PHP_VERSION="$MAJOR_VERSION.$MINOR_VERSION" -t "$tag" . > "logs/$image.log" 2>&1
+      --build-arg PHP_MAJOR_VERSION="$MAJOR_VERSION" \
+      --build-arg PHP_MINOR_VERSION="$MINOR_VERSION" \
+      -t "$tag" . > "logs/$image.log" 2>&1
   out.success.ln "Successfully built multi-arch image with tag '$tag'"
 }
 
