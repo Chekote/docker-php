@@ -1,10 +1,10 @@
 # chekote/behat3.4-sqlite:latest
-# chekote/behat3.4-sqlite:php${PHP_MAJOR_VERSION}
-# chekote/behat3.4-sqlite:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
-# chekote/behat3.4-sqlite:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
-# chekote/behat3.4-sqlite:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
+# chekote/behat3.4-sqlite:${PHP_MAJOR_VERSION}
+# chekote/behat3.4-sqlite:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
+# chekote/behat3.4-sqlite:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
+# chekote/behat3.4-sqlite:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
 ARG PHP_VERSION=7.2
-FROM chekote/behat3.4:php$PHP_VERSION
+FROM chekote/behat3.4:$PHP_VERSION
 
 ENV MIN_PHP_VERSION='5.3.3'
 

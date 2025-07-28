@@ -97,9 +97,7 @@ buildImage() {
 
   local major_tag minor_tag patch_tag latest_tag repo
 
-  TAG_SUFFIX=$([[ "$IMAGE" == "php" ]] && echo "" || echo "php")
-
-  major_tag="$TAG_SUFFIX$MAJOR_VERSION"
+  major_tag="$MAJOR_VERSION"
   minor_tag="$major_tag.$MINOR_VERSION"
 
   repo="$OWNER/$IMAGE"

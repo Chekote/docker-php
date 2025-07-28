@@ -1,8 +1,8 @@
 # chekote/laravel9.x-alpine:latest
-# chekote/laravel9.x-alpine:php${PHP_MAJOR_VERSION}
-# chekote/laravel9.x-alpine:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
-# chekote/laravel9.x-alpine:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
-# chekote/laravel9.x-alpine:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
+# chekote/laravel9.x-alpine:${PHP_MAJOR_VERSION}
+# chekote/laravel9.x-alpine:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
+# chekote/laravel9.x-alpine:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
+# chekote/laravel9.x-alpine:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
 ARG PHP_MAJOR_VERSION=8
 ARG PHP_MINOR_VERSION=4
 

@@ -1,10 +1,10 @@
 # chekote/laravel12.x:latest
-# chekote/laravel12.x:php${PHP_MAJOR_VERSION}
-# chekote/laravel12.x:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
-# chekote/laravel12.x:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
-# chekote/laravel12.x:php${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
+# chekote/laravel12.x:${PHP_MAJOR_VERSION}
+# chekote/laravel12.x:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
+# chekote/laravel12.x:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
+# chekote/laravel12.x:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
 ARG PHP_VERSION=8.2
-FROM chekote/composer:php$PHP_VERSION
+FROM chekote/composer:$PHP_VERSION
 
 ENV SUPPORTED_LARAVEL_VERSION='12.x'
 ENV MIN_PHP_VERSION='8.2'
