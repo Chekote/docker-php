@@ -201,6 +201,7 @@ buildAll() {
   # requires 5.3.2
   assertVersionAtLeast 5.3.2
   buildImage composer
+  buildImage composer-alpine
 
   # requires 5.3.3
   assertVersionAtLeast 5.3.3
