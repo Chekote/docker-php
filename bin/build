@@ -206,6 +206,7 @@ buildAll() {
   # requires 5.3.3
   assertVersionAtLeast 5.3.3
   buildImage behat3.4
+  buildImage behat3.4-alpine
   buildImage behat3.4-sqlite
 
   #requires 7.3
