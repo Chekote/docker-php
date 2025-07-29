@@ -30,7 +30,7 @@ RUN set -eu; \
         #
         # Code coverage requirements
         php${PHP_VERSION}-tokenizer \
-        php${PHP_VERSION}-xdebug \
+        php${PHP_VERSION}-pecl-xdebug \
         php${PHP_VERSION}-xmlwriter; \
     #
     # php-json is not available for PHP 8, so only install it if we're working with lower than 8

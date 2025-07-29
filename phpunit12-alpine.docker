@@ -29,8 +29,8 @@ RUN set -eu; \
         php${PHP_VERSION}-xmlwriter \
         #
         # Code coverage requirements
-        php${PHP_VERSION}-pcov \
-        php${PHP_VERSION}-xdebug; \
+        php${PHP_VERSION}-pecl-pcov \
+        php${PHP_VERSION}-pecl-xdebug; \
     #
     # Cleanup
     rm -rf /var/cache/apk/*; \
