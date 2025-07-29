@@ -246,6 +246,7 @@ buildAll() {
 
   if versionBetween 8.2 8.3.999; then
     buildImage laravel11.x
+    buildImage laravel11.x-alpine
   else
     out.warn "Skipping Laravel 11.x. PHP version is not between 8.2 & 8.3"
   fi
