@@ -245,6 +245,7 @@ buildAll() {
     return
   fi
   buildImage phpunit11
+  buildImage phpunit11-alpine
 
   if versionBetween 8.2 8.3.999; then
     buildImage laravel11.x
