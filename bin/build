@@ -214,6 +214,7 @@ buildAll() {
   #requires 7.3
   assertVersionAtLeast 7.3
   buildImage phpunit9
+  buildImage phpunit9-alpine
 
   #requires 8.0
   if versionBetween 8.0 8.2.999; then
