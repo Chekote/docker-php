@@ -252,6 +252,7 @@ buildAll() {
   fi
 
   buildImage laravel12.x
+  buildImage laravel12.x-alpine
 
   #requires 8.3
   if ! assertVersionAtLeast 8.3; then
