@@ -230,6 +230,7 @@ buildAll() {
     return
   fi
   buildImage phpunit10
+  buildImage phpunit10-alpine
 
   if versionBetween 8.1 8.3.999; then
     buildImage laravel10.x
