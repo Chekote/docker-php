@@ -15,13 +15,16 @@ RUN set -eu; \
     check_php_version $MIN_PHP_VERSION; \
     #
     apk update; \
-    apk add \
+    apk add --no-cache \
         #
         # Behat requirements. See https://github.com/Behat/Behat/blob/v3.4.0/composer.json
         php${PHP_VERSION}-mbstring \
         #
         # JUnitOutputPrinter requirements.
         php${PHP_VERSION}-dom; \
+    #
+    # Cleanup
+    rm -rf /var/cache/apk/*; \
     #
     # Make sure everything works
     php -v; \

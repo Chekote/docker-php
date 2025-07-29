@@ -17,7 +17,7 @@ RUN set -eu; \
     check_php_version $MIN_PHP_VERSION $MAX_PHP_VERSION; \
     #
     apk update; \
-    apk add \
+    apk add --no-cache \
         #
         # Laravel requirements
         # See https://laravel.com/docs/11.x/deployment#server-requirements
@@ -36,6 +36,9 @@ RUN set -eu; \
         php${PHP_VERSION}-tokenizer \
         php${PHP_VERSION}-xml \
         ; \
+    #
+    # Cleanup
+    rm -rf /var/cache/apk/*; \
     #
     # Make sure everything works
     php -v; \

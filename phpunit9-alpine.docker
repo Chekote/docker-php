@@ -15,7 +15,7 @@ RUN set -eu; \
     check_php_version $MIN_PHP_VERSION; \
     #
     apk update; \
-    apk add \
+    apk add --no-cache \
         #
         # PHPUnit requirements.
         # See https://github.com/sebastianbergmann/phpunit/blob/9.0.0/composer.json
@@ -37,6 +37,9 @@ RUN set -eu; \
     if php -r "exit((int) version_compare('8.0', phpversion(), '<'));"; then \
       apk add php${PHP_VERSION}-json; \
     fi; \
+    #
+    # Cleanup
+    rm -rf /var/cache/apk/*; \
     #
     # Make sure everything works
     php -v; \

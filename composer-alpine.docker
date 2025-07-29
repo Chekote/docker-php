@@ -9,7 +9,7 @@ ARG PHP_MINOR_VERSION=4
 FROM chekote/php-alpine:$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION
 
 RUN set -euo pipefail; \
-    apk add \
+    apk add --no-cache \
         #
         # Composer requirements. See https://getcomposer.org/doc/00-intro.md#system-requirements
         git \
@@ -19,4 +19,7 @@ RUN set -euo pipefail; \
         php${PHP_VERSION}-openssl \
         php${PHP_VERSION}-phar \
         php${PHP_VERSION}-zip \
-        unzip
+        unzip;\
+    #
+    # Cleanup
+    rm -rf /var/cache/apk/*; \

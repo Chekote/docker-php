@@ -15,9 +15,7 @@ RUN set -euo pipefail; \
     #
     # Update package index
     apk update; \
-    #
-    # Install PHP
-    apk add \
+    apk add --no-cache \
         #
         # usermod
         shadow \
@@ -26,6 +24,9 @@ RUN set -euo pipefail; \
         php${PHP_VERSION} \
         php${PHP_VERSION}-fpm \
         php${PHP_VERSION}-opcache; \
+    #
+    # Cleanup
+    rm -rf /var/cache/apk/*; \
     #
     # Ensure PHP is executable via php command
     if [[ ! -f /usr/bin/php ]]; then ln -s /usr/bin/php$PHP_VERSION /usr/bin/php; fi; \
