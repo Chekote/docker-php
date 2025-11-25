@@ -47,8 +47,12 @@ RUN set -eu; \
     sed -i "s!;catch_workers_output = yes!catch_workers_output = yes!g" /etc/php/$PHP_VERSION/fpm/pool.d/www.conf; \
     sed -i "s!listen = /run/php/php${PHP_VERSION}-fpm.sock!listen = 0.0.0.0:9000!g" /etc/php/$PHP_VERSION/fpm/pool.d/www.conf; \
     #
+    # Create a symbolic link for the specific PHP-FPM version to the generic binary name
+    ln -sf /usr/sbin/php-fpm$PHP_VERSION /usr/sbin/php-fpm; \
+    #
     # Make sure everything works
     php -v; \
+    php-fpm -v; \
     php-fpm$PHP_VERSION -v
 
 WORKDIR /workdir
