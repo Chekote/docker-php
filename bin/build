@@ -148,7 +148,6 @@ buildMultiArchImage() {
   out.success.ln "Successfully built multi-arch image with tag '$tag'"
 }
 
-
 #######################################
 # Pushes an image
 #
