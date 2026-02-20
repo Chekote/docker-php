@@ -3,7 +3,7 @@
 # chekote/php-alpine:${PHP_MAJOR_VERSION}.$PHP_MINOR_VERSION
 # chekote/php-alpine:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.$PHP_PATCH_VERSION
 # chekote/php-alpine:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date +"%Y-%m-%d-%H-%M-%S")
-FROM chekote/alpine:latest
+FROM chekote/alpine:edge
 
 ARG PHP_MAJOR_VERSION=8
 ARG PHP_MINOR_VERSION=4
