@@ -1,0 +1,45 @@
+# chekote/laravel13.x:latest
+# chekote/laravel13.x:${PHP_MAJOR_VERSION}
+# chekote/laravel13.x:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}
+# chekote/laravel13.x:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}
+# chekote/laravel13.x:${PHP_MAJOR_VERSION}.${PHP_MINOR_VERSION}.${PHP_PATCH_VERSION}-$(date '+%Y-%m-%d-%H-%M-%S')
+ARG PHP_MAJOR_VERSION=8
+ARG PHP_MINOR_VERSION=4
+
+FROM chekote/composer-alpine:$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION
+
+ENV SUPPORTED_LARAVEL_VERSION='13.x'
+ENV MIN_PHP_VERSION='8.3'
+ENV MAX_PHP_VERSION='8.5.999'
+
+RUN set -eu; \
+    #
+    check_php_version $MIN_PHP_VERSION $MAX_PHP_VERSION; \
+    #
+    apk update; \
+    apk add --no-cache \
+        #
+        # Laravel requirements
+        # See https://laravel.com/docs/13.x/deployment#server-requirements
+        # See https://github.com/laravel/framework/blob/13.x/composer.json
+        php${PHP_VERSION}-ctype \
+        php${PHP_VERSION}-curl \
+        php${PHP_VERSION}-dom \
+        php${PHP_VERSION}-fileinfo \
+        # php${PHP_VERSION}-filter \ (already included)
+        # php${PHP_VERSION}-hash \ (already included)
+        php${PHP_VERSION}-mbstring \
+        # php${PHP_VERSION}-openssl \ (already included)
+        # php${PHP_VERSION}-pcre \ (already included)
+        php${PHP_VERSION}-pdo \
+        # php${PHP_VERSION}-session \ (already included)
+        php${PHP_VERSION}-tokenizer \
+        php${PHP_VERSION}-xml \
+        ; \
+    #
+    # Cleanup
+    rm -rf /var/cache/apk/*; \
+    #
+    # Make sure everything works
+    php -v; \
+    php-fpm$PHP_VERSION -v
