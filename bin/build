@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail;
+set -euo pipefail
 
 . bin/lib/colors.bash
 . bin/lib/docker.bash
