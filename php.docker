@@ -18,14 +18,9 @@ RUN set -eu; \
     #
     apt-get update; \
     #
-    # Configure sury.org repository
-    apt-get install -y --no-install-suggests --no-install-recommends ca-certificates curl; \
-    curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb; \
-    dpkg -i /tmp/debsuryorg-archive-keyring.deb; \
-    rm /tmp/debsuryorg-archive-keyring.deb; \
-    . /etc/os-release; \
-    echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ ${VERSION_CODENAME} main" \
-        > /etc/apt/sources.list.d/php.list; \
+    # Configure ondrej PPA
+    apt-get install -y --no-install-suggests --no-install-recommends gnupg software-properties-common; \
+    add-apt-repository ppa:ondrej/php; \
     apt-get update; \
     #
     # Install PHP
