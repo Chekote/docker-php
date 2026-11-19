@@ -198,28 +198,28 @@ updatePatchVersion() {
 #######################################
 buildAll() {
   buildImage php
-  buildImage php-alpine
+#  buildImage php-alpine
 
   # requires 5.3.2
   assertVersionAtLeast 5.3.2
   buildImage composer
-  buildImage composer-alpine
+#  buildImage composer-alpine
 
   # requires 5.3.3
   assertVersionAtLeast 5.3.3
   buildImage behat3.4
-  buildImage behat3.4-alpine
+#  buildImage behat3.4-alpine
   buildImage behat3.4-sqlite
 
   # requires 7.3
   assertVersionAtLeast 7.3
   buildImage phpunit9
-  buildImage phpunit9-alpine
+#  buildImage phpunit9-alpine
 
   # requires 8.0
   if versionBetween 8.0 8.2.999; then
     buildImage laravel9.x
-    buildImage laravel9.x-alpine
+#    buildImage laravel9.x-alpine
   else
     out.warn "Skipping Laravel 9.x. PHP version is not between 8.0 & 8.2"
   fi
@@ -230,11 +230,11 @@ buildAll() {
     return
   fi
   buildImage phpunit10
-  buildImage phpunit10-alpine
+#  buildImage phpunit10-alpine
 
   if versionBetween 8.1 8.3.999; then
     buildImage laravel10.x
-    buildImage laravel10.x-alpine
+#    buildImage laravel10.x-alpine
   else
     out.warn "Skipping Laravel 10.x. PHP version is not between 8.1 & 8.3"
   fi
@@ -245,17 +245,17 @@ buildAll() {
     return
   fi
   buildImage phpunit11
-  buildImage phpunit11-alpine
+#  buildImage phpunit11-alpine
 
   if versionBetween 8.2 8.3.999; then
     buildImage laravel11.x
-    buildImage laravel11.x-alpine
+#    buildImage laravel11.x-alpine
   else
     out.warn "Skipping Laravel 11.x. PHP version is not between 8.2 & 8.3"
   fi
 
   buildImage laravel12.x
-  buildImage laravel12.x-alpine
+#  buildImage laravel12.x-alpine
 
   # requires 8.3
   if ! assertVersionAtLeast 8.3; then
@@ -263,9 +263,9 @@ buildAll() {
     return
   fi
   buildImage phpunit12
-  buildImage phpunit12-alpine
+#  buildImage phpunit12-alpine
   buildImage laravel13.x
-  buildImage laravel13.x-alpine
+#  buildImage laravel13.x-alpine
 }
 
 for version in '8.2' '8.3' '8.4' '8.5'; do
