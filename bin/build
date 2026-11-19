@@ -102,7 +102,7 @@ buildImage() {
 
   repo="$OWNER/$IMAGE"
 
-  buildMultiArchImage "$IMAGE" "$repo:latest"
+  buildMultiArchImage "$IMAGE" "$repo:latest" --no-cache
   pushImage "$repo:latest"
 
   buildMultiArchImage "$IMAGE" "$repo:$major_tag"
@@ -138,10 +138,11 @@ buildImage() {
 buildMultiArchImage() {
   local image="$1"
   local tag="$2"
+  local options="${3:-}"
 
   out.info.ln ""
   out.info.ln "Building $image multi-arch image with tag '$tag'"
-  docker build --platform linux/arm64,linux/amd64 -f "$image.docker" \
+  docker build $options --platform linux/arm64,linux/amd64 -f "$image.docker" \
       --build-arg PHP_MAJOR_VERSION="$MAJOR_VERSION" \
       --build-arg PHP_MINOR_VERSION="$MINOR_VERSION" \
       -t "$tag" . > "logs/$image.log" 2>&1
