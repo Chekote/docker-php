@@ -6,7 +6,7 @@
 FROM chekote/ubuntu:latest
 
 ARG PHP_MAJOR_VERSION=8
-ARG PHP_MINOR_VERSION=4
+ARG PHP_MINOR_VERSION=5
 
 # Ubuntu packages are named like php8.4 (with a period)
 ENV PHP_VERSION=$PHP_MAJOR_VERSION.$PHP_MINOR_VERSION
